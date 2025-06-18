@@ -1,0 +1,385 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>RaiderBot - Business Intelligence Dashboard</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 40px rgba(0,0,0,0.1);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(45deg, #00C853, #4CAF50);
+            color: white;
+            padding: 30px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5rem;
+            margin-bottom: 10px;
+        }
+        
+        .header p {
+            font-size: 1.2rem;
+            opacity: 0.9;
+        }
+        
+        .main-content {
+            padding: 40px;
+        }
+        
+        .query-section {
+            margin-bottom: 40px;
+        }
+        
+        .query-section h2 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+            font-size: 1.8rem;
+        }
+        
+        .quick-queries {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .query-card {
+            background: #f8f9fa;
+            border: 2px solid #e9ecef;
+            border-radius: 15px;
+            padding: 20px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+        
+        .query-card:hover {
+            border-color: #00C853;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,200,83,0.2);
+        }
+        
+        .query-card h3 {
+            color: #495057;
+            margin-bottom: 10px;
+        }
+        
+        .query-card p {
+            color: #6c757d;
+            font-size: 0.9rem;
+        }
+        
+        .custom-query {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-bottom: 30px;
+        }
+        
+        .input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+        
+        #queryInput {
+            flex: 1;
+            padding: 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 10px;
+            font-size: 16px;
+        }
+        
+        #queryInput:focus {
+            outline: none;
+            border-color: #00C853;
+        }
+        
+        .btn {
+            padding: 15px 30px;
+            background: linear-gradient(45deg, #00C853, #4CAF50);
+            color: white;
+            border: none;
+            border-radius: 10px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            transition: all 0.3s ease;
+        }
+        
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0,200,83,0.3);
+        }
+        
+        .btn:disabled {
+            background: #6c757d;
+            cursor: not-allowed;
+            transform: none;
+        }
+        
+        .results {
+            background: #f8f9fa;
+            border-radius: 15px;
+            padding: 30px;
+            margin-top: 30px;
+            min-height: 200px;
+        }
+        
+        .results h3 {
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+        
+        .loading {
+            text-align: center;
+            color: #6c757d;
+            font-style: italic;
+        }
+        
+        .error {
+            color: #dc3545;
+            background: #f8d7da;
+            border: 1px solid #f5c6cb;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .success {
+            color: #155724;
+            background: #d4edda;
+            border: 1px solid #c3e6cb;
+            padding: 15px;
+            border-radius: 8px;
+        }
+        
+        .data-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-top: 20px;
+        }
+        
+        .data-table th, .data-table td {
+            padding: 12px;
+            text-align: left;
+            border-bottom: 1px solid #dee2e6;
+        }
+        
+        .data-table th {
+            background: #e9ecef;
+            font-weight: bold;
+            color: #495057;
+        }
+        
+        .status-bar {
+            background: #e9ecef;
+            padding: 15px 30px;
+            display: flex;
+            justify-content: between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #6c757d;
+        }
+        
+        .status-indicator {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .status-dot {
+            width: 10px;
+            height: 10px;
+            border-radius: 50%;
+            background: #28a745;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🚀 RaiderBot</h1>
+            <p>Business Intelligence Dashboard for Raider Express</p>
+        </div>
+        
+        <div class="main-content">
+            <div class="query-section">
+                <h2>Quick Business Queries</h2>
+                <div class="quick-queries">
+                    <div class="query-card" onclick="runQuickQuery('TMS vs TMS2 orders today')">
+                        <h3>📊 TMS vs TMS2 Today</h3>
+                        <p>Compare trucking vs brokerage orders for today</p>
+                    </div>
+                    <div class="query-card" onclick="runQuickQuery('revenue summary this week')">
+                        <h3>💰 Weekly Revenue</h3>
+                        <p>Revenue summary for the current week</p>
+                    </div>
+                    <div class="query-card" onclick="runQuickQuery('top 10 customers')">
+                        <h3>👥 Top Customers</h3>
+                        <p>Our highest volume customers</p>
+                    </div>
+                    <div class="query-card" onclick="runQuickQuery('fuel costs last month')">
+                        <h3>⛽ Fuel Analysis</h3>
+                        <p>Fuel cost analysis for last month</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="custom-query">
+                <h2>Custom Query</h2>
+                <div class="input-group">
+                    <input type="text" id="queryInput" placeholder="Ask about orders, revenue, customers, routes..." />
+                    <button class="btn" onclick="runCustomQuery()">Ask RaiderBot</button>
+                </div>
+                <p style="color: #6c757d; font-size: 0.9rem;">
+                    Examples: "Show me Route 45 performance", "Chicago delivery metrics", "Driver efficiency this month"
+                </p>
+            </div>
+            
+            <div class="results" id="results" style="display: none;">
+                <h3>Results</h3>
+                <div id="resultsContent"></div>
+            </div>
+        </div>
+        
+        <div class="status-bar">
+            <div class="status-indicator">
+                <div class="status-dot"></div>
+                <span>RaiderBot Server: Online</span>
+            </div>
+            <div>
+                <span>Connected to Raider Express Operations Database</span>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        const API_BASE = 'https://raiderbot-production-production.up.railway.app';
+        
+        async function runQuickQuery(query) {
+            showResults();
+            showLoading();
+            
+            try {
+                const response = await fetch(`${API_BASE}/search_orders`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ query: query })
+                });
+                
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+                }
+                
+                const data = await response.json();
+                displayResults(data, query);
+                
+            } catch (error) {
+                showError(`Failed to query RaiderBot: ${error.message}`);
+            }
+        }
+        
+        async function runCustomQuery() {
+            const query = document.getElementById('queryInput').value.trim();
+            if (!query) {
+                alert('Please enter a query');
+                return;
+            }
+            
+            await runQuickQuery(query);
+        }
+        
+        function showResults() {
+            document.getElementById('results').style.display = 'block';
+        }
+        
+        function showLoading() {
+            document.getElementById('resultsContent').innerHTML = 
+                '<div class="loading">🔍 Querying RaiderBot server...</div>';
+        }
+        
+        function showError(message) {
+            document.getElementById('resultsContent').innerHTML = 
+                `<div class="error">❌ Error: ${message}</div>`;
+        }
+        
+        function displayResults(data, query) {
+            let html = `<div class="success">✅ Query: "${query}"</div>`;
+            
+            if (data.results && Array.isArray(data.results)) {
+                html += '<table class="data-table"><thead><tr>';
+                
+                // Create table headers
+                if (data.results.length > 0) {
+                    Object.keys(data.results[0]).forEach(key => {
+                        html += `<th>${key.replace(/_/g, ' ').toUpperCase()}</th>`;
+                    });
+                    html += '</tr></thead><tbody>';
+                    
+                    // Create table rows
+                    data.results.forEach(row => {
+                        html += '<tr>';
+                        Object.values(row).forEach(value => {
+                            html += `<td>${value}</td>`;
+                        });
+                        html += '</tr>';
+                    });
+                    html += '</tbody></table>';
+                }
+            } else {
+                html += `<pre style="background: #f8f9fa; padding: 20px; border-radius: 8px; overflow-x: auto;">${JSON.stringify(data, null, 2)}</pre>`;
+            }
+            
+            if (data.summary) {
+                html += `<p style="margin-top: 15px; color: #495057;"><strong>Summary:</strong> ${data.summary}</p>`;
+            }
+            
+            document.getElementById('resultsContent').innerHTML = html;
+        }
+        
+        // Allow Enter key to submit custom query
+        document.getElementById('queryInput').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                runCustomQuery();
+            }
+        });
+        
+        // Test server connection on load
+        window.onload = async function() {
+            try {
+                const response = await fetch(`${API_BASE}/health`);
+                if (response.ok) {
+                    console.log('✅ RaiderBot server connection verified');
+                } else {
+                    console.log('⚠️ RaiderBot server connection issues');
+                }
+            } catch (error) {
+                console.log('❌ Cannot connect to RaiderBot server');
+            }
+        };
+    </script>
+</body>
+</html>
