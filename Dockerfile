@@ -29,5 +29,5 @@ EXPOSE 8000
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
   CMD python -c "from server import sf_client; print('healthy' if sf_client.health_check()['status'] == 'healthy' else exit(1))"
 
-# Start application
-CMD ["python", "server.py"]
+# Start application with HTTP server
+CMD ["python", "http_server.py"]
