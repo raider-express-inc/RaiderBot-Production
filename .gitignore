@@ -1,0 +1,17 @@
+# Ignore environment variables (contains credentials)
+.env
+
+# Ignore Python cache
+__pycache__/
+*.pyc
+*.pyo
+
+# Ignore macOS files
+.DS_Store
+
+# Ignore IDE files
+.vscode/
+.idea/
+
+# Ignore logs
+*.log
