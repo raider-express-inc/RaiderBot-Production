@@ -16,7 +16,7 @@ COPY requirements.txt .
 RUN pip install --no-cache-dir -r requirements.txt
 
 # Copy application code
-COPY server.py .
+COPY . .
 
 # Create non-root user for security
 RUN useradd --create-home --shell /bin/bash raiderbot
@@ -27,7 +27,7 @@ EXPOSE 8000
 
 # Health check
 HEALTHCHECK --interval=30s --timeout=30s --start-period=5s --retries=3 \
-  CMD python -c "from server import sf_client; print('healthy' if sf_client.health_check()['status'] == 'healthy' else exit(1))"
+  CMD curl -f http://localhost:8000/health || exit 1
 
 # Start application with HTTP server
 CMD ["python", "http_server.py"]
