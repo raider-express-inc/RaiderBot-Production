@@ -17,6 +17,17 @@ from mcp.server.fastmcp import FastMCP
 import snowflake.connector
 from snowflake.connector import DictCursor
 
+# Foundry automation imports
+try:
+    import sys
+    import os
+    sys.path.append(os.path.dirname(os.path.abspath(__file__)))
+    from src.foundry.automation_engine import RaiderBotAutomationEngine, BuildRequest
+    FOUNDRY_AUTOMATION_AVAILABLE = True
+except ImportError as e:
+    logger.warning(f"Foundry automation not available - continuing without it: {e}")
+    FOUNDRY_AUTOMATION_AVAILABLE = False
+
 # Configure production logging
 logging.basicConfig(
     level=logging.INFO,
@@ -26,6 +37,21 @@ logger = logging.getLogger(__name__)
 
 # Initialize FastMCP app
 app = FastMCP("RaiderBot-Production")
+
+# Initialize Foundry automation if available
+foundry_engine = None
+if FOUNDRY_AUTOMATION_AVAILABLE:
+    try:
+        foundry_config = {
+            "FOUNDRY_URL": os.getenv('FOUNDRY_URL'),
+            "FOUNDRY_CLIENT_ID": os.getenv('FOUNDRY_CLIENT_ID'),
+            "FOUNDRY_CLIENT_SECRET": os.getenv('FOUNDRY_CLIENT_SECRET'),
+            "FOUNDRY_AUTH_TOKEN": os.getenv('FOUNDRY_AUTH_TOKEN')
+        }
+        foundry_engine = RaiderBotAutomationEngine(foundry_config)
+        logger.info("✅ Foundry automation engine initialized")
+    except Exception as e:
+        logger.error(f"❌ Failed to initialize Foundry automation: {e}")
 
 class SnowflakeClient:
     def __init__(self):
@@ -330,6 +356,52 @@ def sql_query(query: str) -> Dict[str, Any]:
         return {
             "error": str(e), 
             "query": query,
+            "generated_at": datetime.now().isoformat()
+        }
+
+@app.tool()
+def build_this_out(request: str) -> Dict[str, Any]:
+    """Build Foundry applications from natural language requests"""
+    try:
+        logger.info(f"🏗️ Processing build request: {request}")
+        
+        if not foundry_engine:
+            return {
+                "error": "Foundry automation not available",
+                "suggestion": "Please configure Foundry credentials in .env file",
+                "generated_at": datetime.now().isoformat()
+            }
+        
+        # Create build request
+        import uuid
+        build_request = BuildRequest(
+            id=str(uuid.uuid4()),
+            user_id="raiderbot_user",
+            natural_language_request=request
+        )
+        
+        # Process the build (run async function in sync context)
+        import asyncio
+        loop = asyncio.new_event_loop()
+        asyncio.set_event_loop(loop)
+        result = loop.run_until_complete(foundry_engine.process_build_request(build_request))
+        loop.close()
+        
+        return {
+            "request": request,
+            "build_id": build_request.id,
+            "success": result["success"],
+            "artifacts": result.get("artifacts", []),
+            "deployment": result.get("deployment", {}),
+            "errors": result.get("errors", []),
+            "generated_at": datetime.now().isoformat()
+        }
+        
+    except Exception as e:
+        logger.error(f"❌ build_this_out failed: {e}")
+        return {
+            "error": str(e),
+            "request": request,
             "generated_at": datetime.now().isoformat()
         }
 
