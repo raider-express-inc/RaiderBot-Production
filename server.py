@@ -375,12 +375,17 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
         
         if bot_integration and any(cmd in request.lower() for cmd in bot_integration.command_mappings.keys()):
             import asyncio
-            loop = asyncio.new_event_loop()
-            asyncio.set_event_loop(loop)
             
             command = next((cmd for cmd in bot_integration.command_mappings.keys() if cmd in request.lower()), "general")
-            result = loop.run_until_complete(bot_integration.process_bot_command(command, user_id))
-            loop.close()
+            
+            try:
+                loop = asyncio.get_running_loop()
+                import concurrent.futures
+                with concurrent.futures.ThreadPoolExecutor() as executor:
+                    future = executor.submit(asyncio.run, bot_integration.process_bot_command(command, user_id))
+                    result = future.result()
+            except RuntimeError:
+                result = asyncio.run(bot_integration.process_bot_command(command, user_id))
             
             return {
                 "request": request,
@@ -400,10 +405,15 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
         )
         
         import asyncio
-        loop = asyncio.new_event_loop()
-        asyncio.set_event_loop(loop)
-        result = loop.run_until_complete(foundry_engine.process_build_request(build_request))
-        loop.close()
+        
+        try:
+            loop = asyncio.get_running_loop()
+            import concurrent.futures
+            with concurrent.futures.ThreadPoolExecutor() as executor:
+                future = executor.submit(asyncio.run, foundry_engine.process_build_request(build_request))
+                result = future.result()
+        except RuntimeError:
+            result = asyncio.run(foundry_engine.process_build_request(build_request))
         
         return {
             "request": request,

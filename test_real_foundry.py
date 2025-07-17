@@ -51,7 +51,16 @@ async def test_real_foundry_integration():
             "title": "Daily Delivery Performance"
         }
         result = await client.update_workbook_visualization("workbook_test_user_main", viz_config)
-        print(f"✅ Visualization updated: {result['visualization_id']}")
+        print(f"📊 Visualization result: {result}")
+        if result.get("status") == "updated":
+            print(f"✅ Visualization updated: {result['visualization_id']}")
+        elif result.get("status") == "fallback_updated":
+            print(f"⚠️ Visualization processed with fallback: {result['visualization_id']}")
+            print(f"📝 Note: {result.get('note', 'Fallback used')}")
+        else:
+            print(f"❌ Visualization update failed: {result.get('error', 'Unknown error')}")
+            if 'attempted_endpoints' in result:
+                print(f"🔍 Attempted endpoints: {result['attempted_endpoints']}")
     except Exception as e:
         print(f"❌ Visualization update failed: {e}")
     

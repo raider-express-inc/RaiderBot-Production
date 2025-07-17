@@ -1,0 +1,57 @@
+{
+  "models": [
+    {
+      "title": "GPT-4",
+      "provider": "openai",
+      "model": "gpt-4",
+      "apiKey": "${OPENAI_API_KEY}"
+    }
+  ],
+  "customCommands": [
+    {
+      "name": "ask",
+      "description": "Ask Continue.dev to scaffold new code patterns",
+      "prompt": "Generate code for: {input}"
+    },
+    {
+      "name": "explain", 
+      "description": "Explain unfamiliar code patterns",
+      "prompt": "Explain this code: {input}"
+    },
+    {
+      "name": "refactor",
+      "description": "Refactor and clean code",
+      "prompt": "Refactor this code for better structure: {input}"
+    },
+    {
+      "name": "debug",
+      "description": "Debug Foundry-specific API issues",
+      "prompt": "Debug this Foundry API issue: {input}"
+    },
+    {
+      "name": "docsearch",
+      "description": "Search Foundry documentation",
+      "prompt": "Find Foundry documentation for: {input}"
+    }
+  ],
+  "includePaths": [
+    "src/foundry/",
+    "src/aip/",
+    "server.py",
+    "deployment/",
+    "scripts/",
+    "tests/"
+  ],
+  "excludePaths": [
+    "tests/",
+    ".git/",
+    "logs/",
+    "__pycache__/",
+    "*.pyc"
+  ],
+  "contextLength": 8000,
+  "completionOptions": {
+    "temperature": 0.2,
+    "maxTokens": 1000
+  }
+}
