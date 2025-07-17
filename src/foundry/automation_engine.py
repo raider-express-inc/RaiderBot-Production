@@ -22,12 +22,13 @@ try:
     FOUNDRY_AVAILABLE = True
 except ImportError:
     try:
-        # Fall back to our mock SDK
+        # Fall back to our real SDK implementation
         import sys
-        sys.path.append('/Users/daneggleton/RaiderBot-Cursor-Deploy')
+        import os
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         from src.foundry_sdk import FoundryClient, Branch, MachineryProcess
         FOUNDRY_AVAILABLE = True
-        print("Using mock Foundry SDK for development")
+        print("Using real Foundry SDK with httpx")
     except ImportError:
         FOUNDRY_AVAILABLE = False
         print("Warning: Foundry SDK not available. Running in mock mode.")
