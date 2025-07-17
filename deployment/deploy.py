@@ -15,7 +15,7 @@ from typing import Dict, Any, List, Optional
 class FoundryDeployer:
     def __init__(self):
         self.config = self._load_config()
-        self.foundry_url = self.config.get("FOUNDRY_URL", "https://your-stack.palantirfoundry.com")
+        self.foundry_url = self.config.get("FOUNDRY_URL", "https://raiderexpress.palantirfoundry.com")
         self.headers = self._get_auth_headers()
         
     def _load_config(self) -> Dict[str, Any]:
@@ -86,6 +86,9 @@ class FoundryDeployer:
         
         print("\n✅ AIP Studio integration deployment complete!")
         print(f"🌐 Access RaiderBot through Foundry Workshop at: {self.foundry_url}/workspace/raiderbot")
+        print(f"🎯 Workshop Build Console: {self.foundry_url}/workspace/raiderbot/workshop/build-console")
+        print(f"📊 User Dashboards: {self.foundry_url}/workspace/compass/view/")
+        print(f"🤖 AIP Studio Agent: {self.foundry_url}/workspace/aip-studio/agents/")
         print("🦸‍♂️ Users can now access connected dashboards with visualization instructions!")
         
         return True
@@ -125,7 +128,7 @@ class FoundryDeployer:
     def _create_workshop_app(self) -> Optional[str]:
         """Create the RaiderBot Workshop application"""
         # This would use Workshop API
-        return f"{self.foundry_url}/workshop/raiderbot-build-console"
+        return f"{self.foundry_url}/workspace/raiderbot/workshop/build-console"
     
     def _setup_monitoring(self):
         """Set up monitoring and alerts"""
