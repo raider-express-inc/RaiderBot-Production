@@ -70,12 +70,19 @@ class FoundryClient:
                 response = await client.post(url, headers=self.headers, json=viz_config)
                 
                 if response.status_code == 200:
+                    try:
+                        api_response = response.json()
+                        viz_id = api_response.get("id", f"viz_{datetime.now().timestamp()}")
+                    except:
+                        api_response = {"raw_response": response.text}
+                        viz_id = f"viz_{datetime.now().timestamp()}"
+                    
                     return {
                         "workbook_id": workbook_id,
-                        "visualization_id": f"viz_{datetime.now().timestamp()}",
+                        "visualization_id": viz_id,
                         "status": "updated",
                         "config": viz_config,
-                        "api_response": response.json()
+                        "api_response": api_response
                     }
                 else:
                     return {
