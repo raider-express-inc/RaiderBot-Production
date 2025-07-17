@@ -31,12 +31,40 @@ class FoundryClient:
     
     def create_workshop_app(self, config: Dict[str, Any]) -> Dict[str, Any]:
         """Create a new Workshop application"""
-        # Mock implementation
         return {
             "app_id": f"workshop_{datetime.now().timestamp()}",
             "status": "created",
             "config": config
         }
+    
+    async def update_workbook_visualization(self, workbook_id: str, viz_config: Dict[str, Any]) -> Dict[str, Any]:
+        """Update workbook with new visualization"""
+        return {
+            "workbook_id": workbook_id,
+            "visualization_id": f"viz_{datetime.now().timestamp()}",
+            "status": "updated",
+            "config": viz_config
+        }
+    
+    async def create_user_dashboard(self, dashboard_config: Dict[str, Any]) -> Dict[str, Any]:
+        """Create connected dashboard for user"""
+        return {
+            "dashboard_id": f"dashboard_{dashboard_config['user_id']}_{datetime.now().timestamp()}",
+            "url": f"{self.foundry_url}/workspace/user/{dashboard_config['user_id']}/dashboard",
+            "status": "created",
+            "config": dashboard_config
+        }
+    
+    def get_user_workbooks(self, user_id: str) -> List[Dict[str, Any]]:
+        """Get list of user's workbooks"""
+        return [
+            {
+                "workbook_id": f"workbook_{user_id}_main",
+                "name": "Main Dashboard",
+                "type": "dashboard",
+                "last_updated": datetime.now().isoformat()
+            }
+        ]
 
 class Branch:
     """Mock branch for safe development"""

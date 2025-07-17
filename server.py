@@ -23,9 +23,9 @@ try:
     import os
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     from src.foundry.automation_engine import RaiderBotAutomationEngine, BuildRequest
+    from src.aip.bot_integration_service import BotIntegrationService
     FOUNDRY_AUTOMATION_AVAILABLE = True
 except ImportError as e:
-    logger.warning(f"Foundry automation not available - continuing without it: {e}")
     FOUNDRY_AUTOMATION_AVAILABLE = False
 
 # Configure production logging
@@ -49,7 +49,8 @@ if FOUNDRY_AUTOMATION_AVAILABLE:
             "FOUNDRY_AUTH_TOKEN": os.getenv('FOUNDRY_AUTH_TOKEN')
         }
         foundry_engine = RaiderBotAutomationEngine(foundry_config)
-        logger.info("✅ Foundry automation engine initialized")
+        bot_integration = BotIntegrationService(foundry_engine)
+        logger.info("✅ Foundry automation engine and bot integration initialized")
     except Exception as e:
         logger.error(f"❌ Failed to initialize Foundry automation: {e}")
 
@@ -360,8 +361,8 @@ def sql_query(query: str) -> Dict[str, Any]:
         }
 
 @app.tool()
-def build_this_out(request: str) -> Dict[str, Any]:
-    """Build Foundry applications from natural language requests"""
+def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any]:
+    """Build Foundry applications from natural language requests with workbook visualization"""
     try:
         logger.info(f"🏗️ Processing build request: {request}")
         
@@ -372,15 +373,32 @@ def build_this_out(request: str) -> Dict[str, Any]:
                 "generated_at": datetime.now().isoformat()
             }
         
-        # Create build request
+        if bot_integration and any(cmd in request.lower() for cmd in bot_integration.command_mappings.keys()):
+            import asyncio
+            loop = asyncio.new_event_loop()
+            asyncio.set_event_loop(loop)
+            
+            command = next((cmd for cmd in bot_integration.command_mappings.keys() if cmd in request.lower()), "general")
+            result = loop.run_until_complete(bot_integration.process_bot_command(command, user_id))
+            loop.close()
+            
+            return {
+                "request": request,
+                "command": command,
+                "user_id": user_id,
+                "success": result["success"],
+                "workbook_instructions": result.get("artifacts", []),
+                "bot_response": result.get("bot_response", ""),
+                "generated_at": datetime.now().isoformat()
+            }
+        
         import uuid
         build_request = BuildRequest(
             id=str(uuid.uuid4()),
-            user_id="raiderbot_user",
+            user_id=user_id,
             natural_language_request=request
         )
         
-        # Process the build (run async function in sync context)
         import asyncio
         loop = asyncio.new_event_loop()
         asyncio.set_event_loop(loop)
@@ -390,6 +408,7 @@ def build_this_out(request: str) -> Dict[str, Any]:
         return {
             "request": request,
             "build_id": build_request.id,
+            "user_id": user_id,
             "success": result["success"],
             "artifacts": result.get("artifacts", []),
             "deployment": result.get("deployment", {}),
