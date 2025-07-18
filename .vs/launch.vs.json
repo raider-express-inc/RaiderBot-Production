@@ -1,0 +1,94 @@
+{
+  "version": "0.2.1",
+  "defaults": {},
+  "configurations": [
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {
+        "FOUNDRY_TOKEN": "${env:FOUNDRY_TOKEN}",
+        "FOUNDRY_BASE_URL": "${env:FOUNDRY_BASE_URL}",
+        "SNOWFLAKE_USER": "${env:SNOWFLAKE_USER}",
+        "SNOWFLAKE_PASSWORD": "${env:SNOWFLAKE_PASSWORD}",
+        "SNOWFLAKE_ACCOUNT": "${env:SNOWFLAKE_ACCOUNT}",
+        "PYTHONPATH": "${workspaceRoot}/src"
+      },
+      "name": "MCP Server",
+      "target": "${workspaceRoot}/server.py",
+      "project": "RaiderBot-Production.pyproj",
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {
+        "FOUNDRY_TOKEN": "${env:FOUNDRY_TOKEN}",
+        "FOUNDRY_BASE_URL": "${env:FOUNDRY_BASE_URL}",
+        "SNOWFLAKE_USER": "${env:SNOWFLAKE_USER}",
+        "SNOWFLAKE_PASSWORD": "${env:SNOWFLAKE_PASSWORD}",
+        "SNOWFLAKE_ACCOUNT": "${env:SNOWFLAKE_ACCOUNT}",
+        "PYTHONPATH": "${workspaceRoot}/src",
+        "PORT": "8000"
+      },
+      "name": "HTTP Server",
+      "target": "${workspaceRoot}/http_server.py",
+      "project": "RaiderBot-Production.pyproj",
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {
+        "FOUNDRY_TOKEN": "${env:FOUNDRY_TOKEN}",
+        "FOUNDRY_BASE_URL": "${env:FOUNDRY_BASE_URL}",
+        "SNOWFLAKE_USER": "${env:SNOWFLAKE_USER}",
+        "SNOWFLAKE_PASSWORD": "${env:SNOWFLAKE_PASSWORD}",
+        "SNOWFLAKE_ACCOUNT": "${env:SNOWFLAKE_ACCOUNT}",
+        "PYTHONPATH": "${workspaceRoot}/src"
+      },
+      "name": "Foundry Tests",
+      "target": "${workspaceRoot}/test_real_foundry.py",
+      "project": "RaiderBot-Production.pyproj",
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {
+        "FOUNDRY_TOKEN": "${env:FOUNDRY_TOKEN}",
+        "FOUNDRY_BASE_URL": "${env:FOUNDRY_BASE_URL}",
+        "SNOWFLAKE_USER": "${env:SNOWFLAKE_USER}",
+        "SNOWFLAKE_PASSWORD": "${env:SNOWFLAKE_PASSWORD}",
+        "SNOWFLAKE_ACCOUNT": "${env:SNOWFLAKE_ACCOUNT}",
+        "PYTHONPATH": "${workspaceRoot}/src"
+      },
+      "name": "Comprehensive Tests",
+      "target": "${workspaceRoot}/run_comprehensive_tests.py",
+      "project": "RaiderBot-Production.pyproj",
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "type": "python",
+      "interpreter": "(default)",
+      "interpreterArguments": "",
+      "scriptArguments": "",
+      "env": {
+        "FOUNDRY_TOKEN": "${env:FOUNDRY_TOKEN}",
+        "FOUNDRY_BASE_URL": "${env:FOUNDRY_BASE_URL}",
+        "PYTHONPATH": "${workspaceRoot}/src"
+      },
+      "name": "Debug Foundry Endpoints",
+      "target": "${workspaceRoot}/debug_foundry_endpoints.py",
+      "project": "RaiderBot-Production.pyproj",
+      "workingDirectory": "${workspaceRoot}"
+    }
+  ]
+}

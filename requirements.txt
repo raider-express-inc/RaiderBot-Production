@@ -15,4 +15,5 @@ aiohttp>=3.9.0
 # Monitoring and Utils
 prometheus-client>=0.19.0
 structlog>=24.1.0
-tenacity>=8.2.3httpx
+tenacity>=8.2.3
+httpx>=0.25.0
