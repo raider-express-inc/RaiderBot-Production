@@ -13,5 +13,13 @@ __pycache__/
 .vscode/
 .idea/
 
+# Visual Studio files (allow project configs, ignore user-specific)
+.vs/*
+!.vs/launch.vs.json
+!.vs/tasks.vs.json
+*.suo
+*.user
+*.sln.docstates
+
 # Ignore logs
 *.log

@@ -1,0 +1,82 @@
+{
+  "version": "0.2.1",
+  "tasks": [
+    {
+      "taskType": "launch",
+      "captureName": "Install Dependencies",
+      "command": "python",
+      "args": ["-m", "pip", "install", "-r", "requirements.txt"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Install Dev Dependencies", 
+      "command": "python",
+      "args": ["-m", "pip", "install", "-r", "requirements-dev.txt"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Run Tests",
+      "command": "python",
+      "args": ["run_comprehensive_tests.py"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Run Foundry Tests",
+      "command": "python",
+      "args": ["test_real_foundry.py"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Test Server Integration",
+      "command": "python",
+      "args": ["test_server_integration.py"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Lint Code",
+      "command": "python",
+      "args": ["-m", "pylint", "src/"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Format Code",
+      "command": "python", 
+      "args": ["-m", "black", "src/", "*.py"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Type Check",
+      "command": "python",
+      "args": ["-m", "mypy", "src/"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Start MCP Server",
+      "command": "python",
+      "args": ["server.py"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Start HTTP Server",
+      "command": "python",
+      "args": ["http_server.py"],
+      "workingDirectory": "${workspaceRoot}"
+    },
+    {
+      "taskType": "launch",
+      "captureName": "Deploy to Foundry",
+      "command": "python",
+      "args": ["deployment/deploy.py"],
+      "workingDirectory": "${workspaceRoot}"
+    }
+  ]
+}
