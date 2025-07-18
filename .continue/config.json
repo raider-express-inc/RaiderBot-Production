@@ -14,6 +14,31 @@
       "prompt": "Generate code for: {input}"
     },
     {
+      "name": "foundry_scaffold",
+      "description": "Scaffold Foundry Workshop applications",
+      "prompt": "Create a Foundry Workshop application with: {input}"
+    },
+    {
+      "name": "aip_tool",
+      "description": "Generate AIP Studio tool functions",
+      "prompt": "Create an AIP Studio tool function for: {input}"
+    },
+    {
+      "name": "debug_foundry",
+      "description": "Debug Foundry API integration issues",
+      "prompt": "Debug this Foundry API issue: {input}"
+    },
+    {
+      "name": "orchestrator_agent",
+      "description": "Generate multi-agent orchestrator patterns",
+      "prompt": "Create orchestrator agent for: {input}"
+    },
+    {
+      "name": "snowflake_audit",
+      "description": "Generate Snowflake audit logging code",
+      "prompt": "Create Snowflake audit logging for: {input}"
+    },
+    {
       "name": "explain", 
       "description": "Explain unfamiliar code patterns",
       "prompt": "Explain this code: {input}"
@@ -22,11 +47,6 @@
       "name": "refactor",
       "description": "Refactor and clean code",
       "prompt": "Refactor this code for better structure: {input}"
-    },
-    {
-      "name": "debug",
-      "description": "Debug Foundry-specific API issues",
-      "prompt": "Debug this Foundry API issue: {input}"
     },
     {
       "name": "docsearch",

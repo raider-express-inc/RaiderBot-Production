@@ -24,6 +24,11 @@ try:
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     from src.foundry.automation_engine import RaiderBotAutomationEngine, BuildRequest
     from src.aip.bot_integration_service import BotIntegrationService
+    from src.aip.studio_deployment_service import AIPStudioDeploymentService
+    from src.orchestrator.external_orchestrator_service import ExternalOrchestratorService
+    from src.sema4.sema4_execution_service import Sema4ExecutionService
+    from src.audit.snowflake_audit_service import SnowflakeAuditService, AuditEventType
+    from src.dashboard.modern_dashboard_service import ModernDashboardService
     FOUNDRY_AUTOMATION_AVAILABLE = True
 except ImportError as e:
     FOUNDRY_AUTOMATION_AVAILABLE = False
@@ -50,7 +55,13 @@ if FOUNDRY_AUTOMATION_AVAILABLE:
         }
         foundry_engine = RaiderBotAutomationEngine(foundry_config)
         bot_integration = BotIntegrationService(foundry_engine)
-        logger.info("✅ Foundry automation engine and bot integration initialized")
+        studio_deployment = AIPStudioDeploymentService(foundry_engine.foundry_client)
+        orchestrator = ExternalOrchestratorService(foundry_engine.foundry_client)
+        sema4_service = Sema4ExecutionService(None)
+        audit_service = SnowflakeAuditService(None)
+        dashboard_service = ModernDashboardService(foundry_engine.foundry_client)
+        
+        logger.info("✅ All services initialized successfully")
     except Exception as e:
         logger.error(f"❌ Failed to initialize Foundry automation: {e}")
 

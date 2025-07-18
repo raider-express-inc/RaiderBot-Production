@@ -26,6 +26,27 @@ class FoundryClient:
         if self.auth_token:
             self.headers["Authorization"] = f"Bearer {self.auth_token}"
     
+    async def discover_workshop_endpoints(self) -> List[str]:
+        """Discover available Workshop API endpoints"""
+        try:
+            async with httpx.AsyncClient(timeout=30.0) as client:
+                response = await client.get(
+                    f"{self.foundry_url}/api/discovery/workshop",
+                    headers=self.headers
+                )
+                if response.status_code == 200:
+                    discovery_data = response.json()
+                    return discovery_data.get("endpoints", [])
+        except Exception as e:
+            print(f"Endpoint discovery failed: {e}")
+        
+        return [
+            "/workspace/api/applications",
+            "/workspace/api/workshop/applications", 
+            "/api/v2/workspace/applications",
+            "/compass/api/applications"
+        ]
+
     def create_branch(self, branch_name: str) -> 'Branch':
         """Create a new development branch"""
         return Branch(branch_name, self)
@@ -71,19 +92,15 @@ class FoundryClient:
                             "failed_endpoint": endpoint
                         }
                 
-                return {
-                    "app_id": f"workshop_{datetime.now().timestamp()}",
-                    "status": "fallback_created",
-                    "config": config,
-                    "note": "Created with fallback - Workshop API endpoints not accessible",
-                    "attempted_endpoints": endpoints_to_try
-                }
+                raise Exception(f"All Workshop API endpoints failed. Attempted: {endpoints_to_try}")
         except Exception as e:
+            print(f"Workshop app creation failed: {e}")
             return {
-                "app_id": f"workshop_{datetime.now().timestamp()}",
-                "status": "error",
+                "app_id": None,
+                "status": "failed",
                 "error": str(e),
-                "config": config
+                "config": config,
+                "note": "Real Workshop API integration required - no fallbacks"
             }
     
     async def update_workbook_visualization(self, workbook_id: str, viz_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -144,21 +161,15 @@ class FoundryClient:
                             "failed_endpoint": endpoint
                         }
                 
-                return {
-                    "workbook_id": workbook_id,
-                    "visualization_id": f"viz_{datetime.now().timestamp()}",
-                    "status": "fallback_updated",
-                    "config": viz_config,
-                    "workshop_config": workshop_config,
-                    "note": "Visualization instruction processed - Workshop API endpoints not accessible",
-                    "attempted_endpoints": endpoints_to_try
-                }
+                raise Exception(f"All visualization update endpoints failed. Attempted: {endpoints_to_try}")
         except Exception as e:
+            print(f"Workbook visualization update failed: {e}")
             return {
                 "workbook_id": workbook_id,
-                "status": "error", 
+                "status": "failed",
                 "error": str(e),
-                "config": viz_config
+                "config": viz_config,
+                "note": "Real Workshop API integration required - no fallbacks"
             }
     
     async def create_user_dashboard(self, dashboard_config: Dict[str, Any]) -> Dict[str, Any]:
@@ -238,24 +249,16 @@ class FoundryClient:
                             "failed_endpoint": endpoint
                         }
                 
-                dashboard_id = f"dashboard_{dashboard_config['user_id']}_{datetime.now().timestamp()}"
-                return {
-                    "dashboard_id": dashboard_id,
-                    "url": f"{self.foundry_url}/workspace/compass/view/{dashboard_id}",
-                    "status": "fallback_created",
-                    "config": dashboard_config,
-                    "workshop_config": workshop_app_config,
-                    "note": "Dashboard provisioned - Workshop API endpoints not accessible but structure defined",
-                    "attempted_endpoints": endpoints_to_try
-                }
+                raise Exception(f"All dashboard creation endpoints failed. Attempted: {endpoints_to_try}")
         except Exception as e:
-            dashboard_id = f"dashboard_{dashboard_config['user_id']}_{datetime.now().timestamp()}"
+            print(f"User dashboard creation failed: {e}")
             return {
-                "dashboard_id": dashboard_id,
-                "url": f"{self.foundry_url}/workspace/compass/view/{dashboard_id}",
-                "status": "error",
+                "dashboard_id": None,
+                "url": None,
+                "status": "failed",
                 "error": str(e),
-                "config": dashboard_config
+                "config": dashboard_config,
+                "note": "Real Workshop API integration required - no fallbacks"
             }
     
     async def get_user_workbooks(self, user_id: str) -> List[Dict[str, Any]]:
@@ -292,7 +295,7 @@ class FoundryClient:
                                     "api_source": endpoint
                                 })
                             
-                            return workbooks if workbooks else self._get_fallback_workbooks(user_id)
+                            return workbooks if workbooks else []
                         except Exception as parse_error:
                             continue  # Try next endpoint
                     elif response.status_code == 404:
@@ -300,30 +303,11 @@ class FoundryClient:
                     else:
                         continue  # Try next endpoint
                 
-                return self._get_fallback_workbooks(user_id)
+                return []
         except Exception as e:
-            return self._get_fallback_workbooks(user_id, str(e))
+            print(f"Failed to get user workbooks: {e}")
+            return []
     
-    def _get_fallback_workbooks(self, user_id: str, error: Optional[str] = None) -> List[Dict[str, Any]]:
-        """Generate fallback workbook list when API calls fail"""
-        return [
-            {
-                "workbook_id": f"workshop_{user_id}_main",
-                "name": "Main Dashboard",
-                "type": "workshop_application",
-                "last_updated": datetime.now().isoformat(),
-                "url": f"{self.foundry_url}/workspace/compass/view/workshop_{user_id}_main",
-                "api_error": error or "Workshop API endpoints not accessible - using fallback"
-            },
-            {
-                "workbook_id": f"workshop_{user_id}_analytics",
-                "name": "Analytics Dashboard", 
-                "type": "workshop_application",
-                "last_updated": datetime.now().isoformat(),
-                "url": f"{self.foundry_url}/workspace/compass/view/workshop_{user_id}_analytics",
-                "api_error": error or "Workshop API endpoints not accessible - using fallback"
-            }
-        ]
 
 class Branch:
     """Simplified branch for development workflow"""

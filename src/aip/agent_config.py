@@ -69,5 +69,17 @@ AIP_AGENT_CONFIG = {
                 "refresh_schedule": "string"
             }
         }
-    ]
+    ],
+    
+    "deployment": {
+        "agent_studio_endpoint": "https://raiderexpress.palantirfoundry.com/workspace/aip-studio/agents/",
+        "function_deployment": True,
+        "auto_publish": True,
+        "workspace_rid": "${FOUNDRY_WORKSPACE_RID}",
+        "agent_rid": "${AIP_AGENT_RID}"
+    },
+    "authentication": {
+        "token_source": "FOUNDRY_TOKEN",
+        "scopes": ["workshop:read", "workshop:write", "compass:read", "compass:write"]
+    }
 }
