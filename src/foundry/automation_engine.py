@@ -11,6 +11,7 @@ from typing import Dict, Any, List, Optional
 from dataclasses import dataclass, asdict
 import aiohttp
 from enum import Enum
+from .workbook_instruction_service import WorkbookInstructionService, VisualizationInstruction
 
 # Import Palantir SDK when available
 try:
@@ -21,12 +22,13 @@ try:
     FOUNDRY_AVAILABLE = True
 except ImportError:
     try:
-        # Fall back to our mock SDK
+        # Fall back to our real SDK implementation
         import sys
-        sys.path.append('/Users/daneggleton/RaiderBot-Cursor-Deploy')
+        import os
+        sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
         from src.foundry_sdk import FoundryClient, Branch, MachineryProcess
         FOUNDRY_AVAILABLE = True
-        print("Using mock Foundry SDK for development")
+        print("Using real Foundry SDK with httpx")
     except ImportError:
         FOUNDRY_AVAILABLE = False
         print("Warning: Foundry SDK not available. Running in mock mode.")
@@ -45,8 +47,8 @@ class BuildRequest:
     user_id: str
     natural_language_request: str
     build_type: Optional[BuildType] = None
-    parameters: Dict[str, Any] = None
-    timestamp: datetime = None
+    parameters: Optional[Dict[str, Any]] = None
+    timestamp: Optional[datetime] = None
     
     def __post_init__(self):
         if self.timestamp is None:
@@ -59,9 +61,13 @@ class BuildStep:
     name: str
     type: str
     status: str = "pending"
-    config: Dict[str, Any] = None
+    config: Optional[Dict[str, Any]] = None
     result: Any = None
     error: Optional[str] = None
+    
+    def __post_init__(self):
+        if self.config is None:
+            self.config = {}
 class RaiderBotAutomationEngine:
     """Main automation engine for RaiderBot Foundry integration"""
     
@@ -70,6 +76,7 @@ class RaiderBotAutomationEngine:
         self.foundry_client = self._init_foundry_client()
         self.aip_agent = None
         self.active_builds = {}
+        self.workbook_service = WorkbookInstructionService(self.foundry_client)
         
     def _init_foundry_client(self):
         """Initialize Foundry client with credentials"""
@@ -152,7 +159,55 @@ class RaiderBotAutomationEngine:
                 }
             ))
         
+        if any(keyword in request_lower for keyword in ["chart", "graph", "visualization", "graphics"]):
+            build_steps.append(BuildStep(
+                name="Generate Visualization Instructions",
+                type="workbook_visualization",
+                config={
+                    "visualization_type": self._detect_visualization_type(request_lower),
+                    "data_source": self._detect_data_source(request_lower),
+                    "user_context": request.user_id
+                }
+            ))
+        
+        if "dashboard" in request_lower and "user" in request_lower:
+            build_steps.append(BuildStep(
+                name="Provision User Dashboard",
+                type="user_dashboard",
+                config={
+                    "user_id": request.user_id,
+                    "template": "role_based",
+                    "integration": "raiderbot"
+                }
+            ))
+        
         return build_steps
+    
+    def _detect_visualization_type(self, request_text: str) -> str:
+        """Detect visualization type from request text"""
+        if any(word in request_text for word in ["bar", "column", "chart"]):
+            return "chart"
+        elif any(word in request_text for word in ["table", "list", "grid"]):
+            return "table"
+        elif any(word in request_text for word in ["metric", "kpi", "number"]):
+            return "metrics"
+        elif any(word in request_text for word in ["map", "location", "route"]):
+            return "map"
+        else:
+            return "chart"
+    
+    def _detect_data_source(self, request_text: str) -> str:
+        """Detect data source from request text"""
+        if "snowflake" in request_text:
+            return "snowflake"
+        elif any(word in request_text for word in ["order", "delivery", "customer"]):
+            return "orders_table"
+        elif any(word in request_text for word in ["driver", "fleet", "vehicle"]):
+            return "fleet_table"
+        elif any(word in request_text for word in ["safety", "incident"]):
+            return "safety_table"
+        else:
+            return "default_data"
     
     async def _create_development_branch(self, request: BuildRequest) -> Any:
         """Create safe development branch"""
@@ -167,14 +222,34 @@ class RaiderBotAutomationEngine:
             try:
                 print(f"Executing step: {step.name}")
                 
-                # Simulate execution
-                await asyncio.sleep(0.5)  # Simulate work
+                if step.type == "workbook_visualization" and step.config:
+                    instruction = VisualizationInstruction(
+                        user_id=step.config.get("user_context", "default"),
+                        workbook_id=f"workbook_{step.config.get('user_context', 'default')}_main",
+                        visualization_type=step.config.get("visualization_type", "chart"),
+                        data_source=step.config.get("data_source", "default"),
+                        chart_config={"type": step.config.get("visualization_type", "chart")},
+                        layout_instructions={"position": "auto", "size": "medium"}
+                    )
+                    result = await self.workbook_service.push_visualization_instructions(instruction)
+                    step.result = result
+                    
+                elif step.type == "user_dashboard" and step.config:
+                    result = await self.workbook_service.provision_user_dashboard(
+                        user_id=step.config.get("user_id", "default"),
+                        user_role="default",
+                        template=step.config.get("template", "default")
+                    )
+                    step.result = result
+                    
+                else:
+                    await asyncio.sleep(0.5)
+                    step.result = {
+                        "artifact_id": f"{step.type}_{datetime.now().timestamp()}",
+                        "location": f"/foundry/artifacts/{step.type}"
+                    }
                 
                 step.status = "completed"
-                step.result = {
-                    "artifact_id": f"{step.type}_{datetime.now().timestamp()}",
-                    "location": f"/foundry/artifacts/{step.type}"
-                }
                 
             except Exception as e:
                 step.status = "failed"
