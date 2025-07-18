@@ -35,6 +35,12 @@
     <Compile Include="src\foundry\quarterback_functions.py" />
     <Compile Include="src\foundry\workbook_instruction_service.py" />
     <Compile Include="src\foundry\machinery_config.py" />
+    <Compile Include="src\foundry\sls_logging.py" />
+    <Compile Include="src\foundry\ontology_integration.py" />
+    <Compile Include="src\foundry\error_handling.py" />
+    <Compile Include="src\foundry\performance_optimization.py" />
+    <Compile Include="src\foundry\aip_integration.py" />
+    <Compile Include="src\foundry\testing_framework.py" />
     <Compile Include="src\aip\__init__.py" />
     <Compile Include="src\aip\agent_config.py" />
     <Compile Include="src\aip\bot_integration_service.py" />
