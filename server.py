@@ -69,13 +69,19 @@ class SnowflakeClient:
     def __init__(self):
         """Initialize Snowflake connection with environment variables for security"""
         self.connection_params = {
-            'account': os.getenv('SNOWFLAKE_ACCOUNT', 'LI21842-WW07444'),
-            'user': os.getenv('SNOWFLAKE_USER', 'ASH073108'),
-            'password': os.getenv('SNOWFLAKE_PASSWORD', 'Phi1848gam!'),
-            'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE', 'TABLEAU_CONNECT'),
-            'database': os.getenv('SNOWFLAKE_DATABASE', 'RAIDER_DB'),
-            'schema': os.getenv('SNOWFLAKE_SCHEMA', 'SQL_SERVER_DBO')
+            'account': os.getenv('SNOWFLAKE_ACCOUNT'),
+            'user': os.getenv('SNOWFLAKE_USER'),
+            'password': os.getenv('SNOWFLAKE_PASSWORD'),
+            'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE'),
+            'database': os.getenv('SNOWFLAKE_DATABASE'),
+            'schema': os.getenv('SNOWFLAKE_SCHEMA')
         }
+
+        missing = [k for k, v in self.connection_params.items() if not v]
+        if missing:
+            raise EnvironmentError(
+                f"Missing required Snowflake environment variables: {', '.join(missing)}"
+            )
         self.connection = None
         self.connection_pool = []
         

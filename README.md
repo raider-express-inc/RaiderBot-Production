@@ -12,6 +12,7 @@ Transform ideas into production Foundry applications with simple commands:
 - 🏗️ **[Foundry Integration](./FOUNDRY_README.md)** - Technical details about Foundry automation
 - 🚀 **[Deployment Guide](./DEPLOYMENT_GUIDE.md)** - How to deploy to cloud
 - 👥 **[Team Setup](./TEAM_SETUP_GUIDE.md)** - Onboarding new team members
+- 📝 **[Devin Handoff](./DEVIN_HANDOFF.md)** - Final deployment checklist for Devin
 
 ## 🎯 Quick Start
 
@@ -34,6 +35,10 @@ pip install -r requirements.txt
 # Configure credentials
 cp .env.example .env
 nano .env  # Add your credentials
+# Important: keep this file out of Git. Credentials must never be committed.
+
+# Run tests before deploying
+python run_comprehensive_tests.py
 
 # Deploy
 python3 deployment/deploy.py

@@ -10,12 +10,12 @@
 ### Step 2: Set Environment Variables
 In Cursor Project Settings → Environment Variables:
 ```
-SNOWFLAKE_ACCOUNT=LI21842-WW07444
-SNOWFLAKE_USER=ASH073108
-SNOWFLAKE_PASSWORD=Phi1848gam!
-SNOWFLAKE_WAREHOUSE=TABLEAU_CONNECT
-SNOWFLAKE_DATABASE=RAIDER_DB
-SNOWFLAKE_SCHEMA=SQL_SERVER_DBO
+SNOWFLAKE_ACCOUNT=<your_account>
+SNOWFLAKE_USER=<your_user>
+SNOWFLAKE_PASSWORD=<your_password>
+SNOWFLAKE_WAREHOUSE=<your_warehouse>
+SNOWFLAKE_DATABASE=<your_database>
+SNOWFLAKE_SCHEMA=<your_schema>
 ENVIRONMENT=production
 PORT=8000
 ```
@@ -56,7 +56,7 @@ Replace your local config with cloud URL:
 
 ### 1. Health Check
 Visit: `https://your-app.cursor.app/health`
-Should return: `{"status": "healthy", "user": "ASH073108", ...}`
+Should return: `{"status": "healthy", "user": "<your_user>", ...}`
 
 ### 2. Claude Desktop Test
 Ask: **"Show me TMS vs TMS2 orders today"**

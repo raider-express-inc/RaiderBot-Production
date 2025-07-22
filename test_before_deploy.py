@@ -9,13 +9,20 @@ import sys
 import json
 from datetime import datetime
 
-# Set environment variables for testing
-os.environ['SNOWFLAKE_ACCOUNT'] = 'LI21842-WW07444'
-os.environ['SNOWFLAKE_USER'] = 'ASH073108'
-os.environ['SNOWFLAKE_PASSWORD'] = 'Phi1848gam!'
-os.environ['SNOWFLAKE_WAREHOUSE'] = 'TABLEAU_CONNECT'
-os.environ['SNOWFLAKE_DATABASE'] = 'RAIDER_DB'
-os.environ['SNOWFLAKE_SCHEMA'] = 'SQL_SERVER_DBO'
+# Ensure required environment variables are provided for testing
+required_env = [
+    'SNOWFLAKE_ACCOUNT',
+    'SNOWFLAKE_USER',
+    'SNOWFLAKE_PASSWORD',
+    'SNOWFLAKE_WAREHOUSE',
+    'SNOWFLAKE_DATABASE',
+    'SNOWFLAKE_SCHEMA',
+]
+missing = [var for var in required_env if not os.getenv(var)]
+if missing:
+    raise EnvironmentError(
+        f"Missing required Snowflake environment variables for tests: {', '.join(missing)}"
+    )
 
 def test_server_import():
     """Test that server.py imports correctly"""
