@@ -125,11 +125,10 @@ class FoundryDeployer:
             if result.get("status") == "created":
                 return result["app_id"]
             else:
-                print(f"⚠️ Agent creation fallback used: {result.get('error', 'Unknown error')}")
-                return "agent_raiderbot_production"
+                raise Exception(f"Agent creation failed: {result.get('error', 'Unknown error')}")
         except Exception as e:
-            print(f"⚠️ Agent creation failed: {e}")
-            return "agent_raiderbot_fallback"
+            print(f"❌ Agent creation failed: {e}")
+            raise Exception(f"AIP Agent creation failed - no fallback allowed: {e}")
     
     def _deploy_machinery_processes(self) -> List[str]:
         """Deploy Machinery automation processes"""
@@ -162,11 +161,10 @@ class FoundryDeployer:
             if result.get("status") == "created":
                 return f"{self.foundry_url}/workspace/raiderbot/workshop/build-console"
             else:
-                print(f"⚠️ Workshop app creation used fallback: {result.get('error', 'Unknown error')}")
-                return f"{self.foundry_url}/workspace/raiderbot/workshop/build-console"
+                raise Exception(f"Workshop app creation failed: {result.get('error', 'Unknown error')}")
         except Exception as e:
-            print(f"⚠️ Workshop app creation failed: {e}")
-            return f"{self.foundry_url}/workspace/raiderbot/workshop/build-console"
+            print(f"❌ Workshop app creation failed: {e}")
+            raise Exception(f"Workshop app creation failed - no fallback allowed: {e}")
     
     def _setup_monitoring(self):
         """Set up monitoring and alerts"""
@@ -206,8 +204,7 @@ class FoundryDeployer:
                     print(f"  ✅ {user['name']} ({user['role']}): {result['url']}")
                     provisioned_count += 1
                 else:
-                    print(f"  ⚠️ {user['name']} ({user['role']}): Fallback used")
-                    provisioned_count += 1
+                    print(f"  ❌ {user['name']} ({user['role']}): Dashboard creation failed - {result.get('error', 'Unknown error')}")
                     
             except Exception as e:
                 print(f"  ❌ {user['name']} ({user['role']}): {e}")
