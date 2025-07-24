@@ -6,6 +6,11 @@ Enhanced with all 8 critical checklist integrations
 import asyncio
 from typing import Dict, Any, List, Optional
 from datetime import datetime
+import sys
+import os
+sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
+
+from consolidation.unified_system_service import UnifiedRaiderBotSystem
 
 class BotIntegrationService:
     """Enhanced bot integration with all critical services"""
@@ -13,6 +18,7 @@ class BotIntegrationService:
     def __init__(self, foundry_engine):
         self.foundry_engine = foundry_engine
         self.foundry_client = foundry_engine.foundry_client
+        self.unified_system = UnifiedRaiderBotSystem()
         self.command_mappings = {
             "delivery_performance": "Create delivery performance dashboard",
             "safety_metrics": "Create safety metrics dashboard", 
@@ -40,6 +46,14 @@ class BotIntegrationService:
                 "success": True
             })
             
+            unified_result = await self.unified_system.process_unified_query(
+                query=command,
+                context={
+                    "user_id": user_id,
+                    "command": command
+                }
+            )
+            
             if command in self.command_mappings:
                 description = self.command_mappings[command]
                 
@@ -65,6 +79,7 @@ class BotIntegrationService:
                     "artifacts": workbook_instructions,
                     "orchestrator_result": orchestrator_result,
                     "dashboard_result": dashboard_result,
+                    "unified_result": unified_result,
                     "timestamp": datetime.now().isoformat()
                 }
             else:
