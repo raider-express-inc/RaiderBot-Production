@@ -14,7 +14,7 @@ class ContinueIntegrationService:
     def __init__(self):
         self.config_path = ".continue/config.json"
         
-    async def scaffold_foundry_component(self, component_type: str, requirements: str) -> Dict[str, Any]:
+    def scaffold_foundry_component(self, component_type: str, requirements: str) -> Dict[str, Any]:
         """Use Continue.dev to scaffold Foundry components"""
         try:
             prompt = f"Create a {component_type} for Foundry with requirements: {requirements}"

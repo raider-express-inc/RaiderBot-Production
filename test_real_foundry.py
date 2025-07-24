@@ -54,9 +54,9 @@ async def test_real_foundry_integration():
         print(f"📊 Visualization result: {result}")
         if result.get("status") == "updated":
             print(f"✅ Visualization updated: {result['visualization_id']}")
-        elif result.get("status") == "fallback_updated":
-            print(f"⚠️ Visualization processed with fallback: {result['visualization_id']}")
-            print(f"📝 Note: {result.get('note', 'Fallback used')}")
+        elif result.get("status") == "error":
+            print(f"❌ Visualization update failed: {result.get('error', 'Unknown error')}")
+            raise Exception(f"Visualization update failed: {result.get('error', 'Unknown error')}")
         else:
             print(f"❌ Visualization update failed: {result.get('error', 'Unknown error')}")
             if 'attempted_endpoints' in result:

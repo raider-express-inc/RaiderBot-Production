@@ -287,7 +287,7 @@ class RaiderBotAutomationEngine:
         return {
             "deployment_id": f"deploy_{datetime.now().timestamp()}",
             "artifacts": artifacts,
-            "url": "https://your-stack.palantirfoundry.com/workspace/raiderbot",
+            "url": "https://raiderexpress.palantirfoundry.com/workspace/raiderbot",
             "timestamp": datetime.now().isoformat()
         }
 
@@ -295,9 +295,10 @@ class RaiderBotAutomationEngine:
 async def test_automation():
     """Test the automation engine"""
     config = {
-        "FOUNDRY_URL": "https://test.palantirfoundry.com",
-        "FOUNDRY_CLIENT_ID": "test_client",
-        "FOUNDRY_CLIENT_SECRET": "test_secret"
+        "FOUNDRY_URL": "https://raiderexpress.palantirfoundry.com",
+        "FOUNDRY_AUTH_TOKEN": os.getenv("FOUNDRY_AUTH_TOKEN", ""),
+        "FOUNDRY_CLIENT_ID": os.getenv("FOUNDRY_CLIENT_ID", ""),
+        "FOUNDRY_CLIENT_SECRET": os.getenv("FOUNDRY_CLIENT_SECRET", "")
     }
     
     engine = RaiderBotAutomationEngine(config)

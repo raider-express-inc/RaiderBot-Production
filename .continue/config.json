@@ -39,7 +39,7 @@
       "prompt": "Create Snowflake audit logging for: {input}"
     },
     {
-      "name": "explain", 
+      "name": "explain",
       "description": "Explain unfamiliar code patterns",
       "prompt": "Explain this code: {input}"
     },
@@ -52,6 +52,11 @@
       "name": "docsearch",
       "description": "Search Foundry documentation",
       "prompt": "Find Foundry documentation for: {input}"
+    },
+    {
+      "name": "raiderbot_deployment",
+      "description": "Deploy consolidated RaiderBot system",
+      "prompt": "Deploy RaiderBot with Workshop app, AIP agent, and quarterback functions to Foundry"
     }
   ],
   "includePaths": [
