@@ -158,31 +158,37 @@ class SnowflakeConnection:
     def _fallback_semantic_query(self, question: str, context: Optional[Dict] = None) -> Dict[str, Any]:
         """Fallback semantic layer for when Cortex is not available"""
         question_lower = question.lower()
-        schema = self.config.get("schema", "SQL_SERVER_DBO")
+        schema = self.config.get("schema", "dbo")
+        
+        table_ref = f'"{schema}"."orders"'
         
         if 'order' in question_lower or 'delivery' in question_lower:
             sql = f"""
             SELECT TOP 10 
-                ID as order_id, CUSTOMER_ID, STATUS, ORDERED_DATE
-            FROM {schema}.ORDERS 
-            ORDER BY ORDERED_DATE DESC
+                "id", "customer_id", "ordered_date", "status", "total_charge"
+            FROM {table_ref} 
+            WHERE "ordered_date" IS NOT NULL
+            ORDER BY "ordered_date" DESC
             """
         elif 'revenue' in question_lower or 'sales' in question_lower:
             sql = f"""
             SELECT 
-                DATE_TRUNC('month', ORDERED_DATE) as month,
-                SUM(TOTAL_CHARGE) as revenue
-            FROM {schema}.ORDERS 
-            WHERE ORDERED_DATE >= DATEADD('month', -6, CURRENT_DATE())
+                DATE_TRUNC('month', "ordered_date") as month,
+                SUM("total_charge") as revenue,
+                COUNT(*) as order_count
+            FROM {table_ref} 
+            WHERE "ordered_date" >= DATEADD('month', -6, CURRENT_DATE())
+            AND "total_charge" IS NOT NULL
             GROUP BY month
             ORDER BY month
             """
         elif 'customer' in question_lower:
             sql = f"""
             SELECT TOP 10
-                CUSTOMER_ID, COUNT(*) as order_count, SUM(TOTAL_CHARGE) as total_spent
-            FROM {schema}.ORDERS
-            GROUP BY CUSTOMER_ID
+                "customer_id", COUNT(*) as order_count, SUM("total_charge") as total_spent
+            FROM {table_ref}
+            WHERE "customer_id" IS NOT NULL AND "total_charge" IS NOT NULL
+            GROUP BY "customer_id"
             ORDER BY total_spent DESC
             """
         else:
