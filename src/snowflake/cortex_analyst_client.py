@@ -31,7 +31,8 @@ class SnowflakeConnection:
                 "password": access_token,
                 "account": os.getenv("SNOWFLAKE_ACCOUNT"),
                 "database": os.getenv("SNOWFLAKE_DATABASE"),
-                "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE")
+                "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
+                "schema": os.getenv("SNOWFLAKE_SCHEMA")
             }
             logger.info("Using JWT token as password authentication")
         else:
@@ -41,6 +42,7 @@ class SnowflakeConnection:
                 "account": os.getenv("SNOWFLAKE_ACCOUNT"),
                 "database": os.getenv("SNOWFLAKE_DATABASE"),
                 "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
+                "schema": os.getenv("SNOWFLAKE_SCHEMA")
             }
             logger.info("Using password authentication")
             
@@ -156,30 +158,31 @@ class SnowflakeConnection:
     def _fallback_semantic_query(self, question: str, context: Optional[Dict] = None) -> Dict[str, Any]:
         """Fallback semantic layer for when Cortex is not available"""
         question_lower = question.lower()
+        schema = self.config.get("schema", "SQL_SERVER_DBO")
         
         if 'order' in question_lower or 'delivery' in question_lower:
-            sql = """
+            sql = f"""
             SELECT TOP 10 
-                order_id, customer_name, delivery_status, order_date
-            FROM orders 
-            ORDER BY order_date DESC
+                ID as order_id, CUSTOMER_ID, STATUS, ORDERED_DATE
+            FROM {schema}.ORDERS 
+            ORDER BY ORDERED_DATE DESC
             """
         elif 'revenue' in question_lower or 'sales' in question_lower:
-            sql = """
+            sql = f"""
             SELECT 
-                DATE_TRUNC('month', order_date) as month,
-                SUM(order_total) as revenue
-            FROM orders 
-            WHERE order_date >= DATEADD('month', -6, CURRENT_DATE())
+                DATE_TRUNC('month', ORDERED_DATE) as month,
+                SUM(TOTAL_CHARGE) as revenue
+            FROM {schema}.ORDERS 
+            WHERE ORDERED_DATE >= DATEADD('month', -6, CURRENT_DATE())
             GROUP BY month
             ORDER BY month
             """
         elif 'customer' in question_lower:
-            sql = """
+            sql = f"""
             SELECT TOP 10
-                customer_name, COUNT(*) as order_count, SUM(order_total) as total_spent
-            FROM orders
-            GROUP BY customer_name
+                CUSTOMER_ID, COUNT(*) as order_count, SUM(TOTAL_CHARGE) as total_spent
+            FROM {schema}.ORDERS
+            GROUP BY CUSTOMER_ID
             ORDER BY total_spent DESC
             """
         else:
@@ -251,7 +254,8 @@ class SnowflakeConnection:
                 'timestamp': test_result[0]['CURRENT_TIME'] if test_result else None,
                 'account': self.config.get('account'),
                 'database': self.config.get('database'),
-                'warehouse': self.config.get('warehouse')
+                'warehouse': self.config.get('warehouse'),
+                'schema': self.config.get('schema')
             }
             
         except Exception as e:
