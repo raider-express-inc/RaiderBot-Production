@@ -21,7 +21,7 @@ def test_server_import():
     """Test that server.py imports correctly"""
     print("🔍 Testing server import...")
     try:
-        from server import sf_client, search_orders, revenue_summary, health_check
+        from server import cortex_client, search_orders, revenue_summary, health_check
         print("✅ Server imports successful")
         return True
     except Exception as e:
@@ -32,8 +32,8 @@ def test_snowflake_connection():
     """Test Snowflake connection"""
     print("🔍 Testing Snowflake connection...")
     try:
-        from server import sf_client
-        health = sf_client.health_check()
+        from server import cortex_client
+        health = cortex_client.health_check()
         if health['status'] == 'healthy':
             print("✅ Snowflake connection healthy")
             print(f"   User: {health['user']}")
