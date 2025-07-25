@@ -22,16 +22,32 @@ class SnowflakeConnection:
     
     def __init__(self):
         """Initialize following Cursor directory MCP pattern"""
-        self.config = {
-            "user": os.getenv("SNOWFLAKE_USER"),
-            "password": os.getenv("SNOWFLAKE_PASSWORD"),
-            "account": os.getenv("SNOWFLAKE_ACCOUNT"),
-            "database": os.getenv("SNOWFLAKE_DATABASE"),
-            "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
-        }
+        access_token = os.getenv("SNOWFLAKE_ACCESS_TOKEN")
+        password = os.getenv("SNOWFLAKE_PASSWORD")
+        
+        if access_token:
+            self.config = {
+                "user": os.getenv("SNOWFLAKE_USER"),
+                "password": access_token,
+                "account": os.getenv("SNOWFLAKE_ACCOUNT"),
+                "database": os.getenv("SNOWFLAKE_DATABASE"),
+                "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE")
+            }
+            logger.info("Using JWT token as password authentication")
+        else:
+            self.config = {
+                "user": os.getenv("SNOWFLAKE_USER"),
+                "password": password,
+                "account": os.getenv("SNOWFLAKE_ACCOUNT"),
+                "database": os.getenv("SNOWFLAKE_DATABASE"),
+                "warehouse": os.getenv("SNOWFLAKE_WAREHOUSE"),
+            }
+            logger.info("Using password authentication")
+            
         self.connection = None
         self.cortex_enabled = True
-        logger.info(f"Initialized with config (excluding password): {json.dumps({k:v for k,v in self.config.items() if k != 'password'})}")
+        safe_config = {k:v for k,v in self.config.items() if k not in ['password', 'token']}
+        logger.info(f"Initialized with config: {json.dumps(safe_config)}")
         
     def ensure_connection(self):
         """Ensure connection following Cursor directory MCP pattern"""
