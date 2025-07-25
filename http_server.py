@@ -11,9 +11,10 @@ from typing import Dict, List, Any, Optional
 from datetime import datetime
 from flask import Flask, request, jsonify
 
-# Snowflake imports  
-import snowflake.connector
-from snowflake.connector import DictCursor
+# Enhanced Snowflake client
+import sys
+sys.path.append(os.path.dirname(__file__))
+from src.snowflake.cortex_analyst_client import cortex_client
 
 # Configure production logging
 logging.basicConfig(
@@ -25,56 +26,13 @@ logger = logging.getLogger(__name__)
 # Initialize Flask app
 app = Flask(__name__)
 
-class SnowflakeClient:
-    def __init__(self):
-        """Initialize Snowflake connection with environment variables"""
-        self.connection_params = {
-            'account': os.getenv('SNOWFLAKE_ACCOUNT', 'LI21842-WW07444'),
-            'user': os.getenv('SNOWFLAKE_USER', 'ASH073108'),
-            'password': os.getenv('SNOWFLAKE_PASSWORD', 'Phi1848gam!'),
-            'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE', 'TABLEAU_CONNECT'),
-            'database': os.getenv('SNOWFLAKE_DATABASE', 'RAIDER_DB'),
-            'schema': os.getenv('SNOWFLAKE_SCHEMA', 'SQL_SERVER_DBO')
-        }
-        self.connection = None
-        
-    def connect(self):
-        """Establish connection to Snowflake"""
-        try:
-            self.connection = snowflake.connector.connect(**self.connection_params)
-            logger.info("✅ Connected to Snowflake successfully")
-            return True
-        except Exception as e:
-            logger.error(f"❌ Failed to connect to Snowflake: {e}")
-            return False
-    
-    def execute_query(self, query: str) -> List[Dict[str, Any]]:
-        """Execute SQL query and return results"""
-        if not self.connection:
-            if not self.connect():
-                raise Exception("Cannot connect to Snowflake")
-        
-        try:
-            cursor = self.connection.cursor(DictCursor)
-            cursor.execute(query)
-            results = cursor.fetchall()
-            cursor.close()
-            
-            logger.info(f"✅ Query executed successfully: {len(results)} rows")
-            return results
-            
-        except Exception as e:
-            logger.error(f"❌ Query failed: {e}")
-            raise e
-
-# Initialize Snowflake client
-sf_client = SnowflakeClient()
+# Snowflake client is now imported from enhanced cortex_analyst_client
 
 @app.route('/health')
 def health_check():
     """Health check endpoint"""
     try:
-        result = sf_client.execute_query("SELECT CURRENT_USER(), CURRENT_WAREHOUSE(), CURRENT_DATABASE()")
+        result = cortex_client.execute_query("SELECT CURRENT_USER(), CURRENT_WAREHOUSE(), CURRENT_DATABASE()")
         return jsonify({
             "status": "healthy",
             "user": result[0]["CURRENT_USER()"] if result else None,
@@ -124,7 +82,7 @@ def search_orders():
             LIMIT 50
             """
         
-        results = sf_client.execute_query(sql_query)
+        results = cortex_client.execute_query(sql_query)
         
         # Format results
         if "TMS" in query.upper() and ("VS" in query.upper() or "VERSUS" in query.upper()):
@@ -176,9 +134,9 @@ if __name__ == "__main__":
     # Production startup
     logger.info("🚀 Starting RaiderBot HTTP Server (Production)")
     
-    # Test Snowflake connection
-    if sf_client.connect():
-        logger.info("✅ Snowflake connection established")
+    # Test enhanced Snowflake connection
+    if cortex_client.connect():
+        logger.info("✅ Enhanced Snowflake connection established")
     else:
         logger.error("❌ Failed to connect to Snowflake")
     

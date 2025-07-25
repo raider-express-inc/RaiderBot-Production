@@ -1,0 +1,43 @@
+{
+  "component": "quarterback_functions",
+  "status": "deployed",
+  "timestamp": "2025-07-24T21:14:45.835101",
+  "system_status": {
+    "timestamp": "2025-07-24T21:14:45.835087",
+    "overall_status": "healthy",
+    "components": {
+      "foundry_client": "initialized",
+      "workbook_service": "initialized",
+      "quarterback": "initialized",
+      "email_monitoring": "initialized",
+      "mcp_integration": "initialized"
+    }
+  },
+  "test_results": [
+    {
+      "query": "emergency truck breakdown on I-35",
+      "success": true,
+      "intent": "emergency_response",
+      "confidence": 0.7999999999999999
+    },
+    {
+      "query": "optimize delivery routes for today",
+      "success": true,
+      "intent": "route_optimization",
+      "confidence": 0.7
+    },
+    {
+      "query": "check fleet maintenance status",
+      "success": true,
+      "intent": "fleet_management",
+      "confidence": 0.7
+    }
+  ],
+  "access_methods": [
+    "UnifiedRaiderBotSystem.process_unified_query()",
+    "process_user_query() - Direct function call",
+    "autonomous_decision_making() - Direct function call"
+  ],
+  "deployment_location": "RaiderBot-Production/src/foundry/quarterback_functions.py",
+  "integration_status": "Ready for Foundry Workshop deployment"
+}

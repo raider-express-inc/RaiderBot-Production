@@ -1,0 +1,35 @@
+{
+  "verification_timestamp": "2025-07-25T04:15:40.511279",
+  "components_tested": [
+    {
+      "component": "foundry_workshop_dashboard",
+      "claimed_status": "deployed",
+      "actual_status": "ACCESSIBLE",
+      "url": "https://raiderexpress.palantirfoundry.com/workspace/workshop/raiderbot-dashboard"
+    },
+    {
+      "component": "quarterback_functions",
+      "claimed_status": "deployed",
+      "actual_status": "WORKING_LOCALLY",
+      "location": "src/foundry/quarterback_functions.py"
+    },
+    {
+      "component": "unified_system_service",
+      "claimed_status": "deployed",
+      "actual_status": "WORKING_LOCALLY",
+      "location": "src/consolidation/unified_system_service.py"
+    },
+    {
+      "component": "aip_studio_integration",
+      "claimed_status": "deployed",
+      "actual_status": "CONFIG_AVAILABLE",
+      "location": "src/aip/"
+    }
+  ],
+  "actual_deployment_status": "LOCAL_ONLY",
+  "discrepancies_found": [],
+  "working_components": [
+    "foundry_workshop_dashboard"
+  ],
+  "non_working_components": []
+}

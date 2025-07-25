@@ -1,0 +1,60 @@
+{
+  "component": "unified_system_service",
+  "status": "deployed",
+  "timestamp": "2025-07-25T00:48:29.667598",
+  "system_status": {
+    "timestamp": "2025-07-25T00:48:29.662739",
+    "overall_status": "healthy",
+    "components": {
+      "foundry_client": "initialized",
+      "workbook_service": "initialized",
+      "quarterback": "initialized",
+      "email_monitoring": "initialized",
+      "mcp_integration": "initialized"
+    }
+  },
+  "test_results": [
+    {
+      "query": "emergency truck breakdown on I-35",
+      "success": true,
+      "intent": "emergency_response",
+      "confidence": 0.7999999999999999,
+      "processing_time": 0
+    },
+    {
+      "query": "optimize delivery routes for today",
+      "success": true,
+      "intent": "route_optimization",
+      "confidence": 0.7,
+      "processing_time": 0
+    },
+    {
+      "query": "generate fleet performance report",
+      "success": true,
+      "intent": "fleet_management",
+      "confidence": 0.7,
+      "processing_time": 0
+    },
+    {
+      "query": "check customer service metrics",
+      "success": true,
+      "intent": "maintenance_scheduling",
+      "confidence": 0.7,
+      "processing_time": 0
+    },
+    {
+      "query": "analyze route efficiency data",
+      "success": true,
+      "intent": "route_optimization",
+      "confidence": 0.7,
+      "processing_time": 0
+    }
+  ],
+  "access_methods": [
+    "UnifiedRaiderBotSystem.process_unified_query()",
+    "UnifiedRaiderBotSystem.get_system_status()",
+    "UnifiedRaiderBotSystem.initialize_system()"
+  ],
+  "deployment_location": "RaiderBot-Production/src/consolidation/unified_system_service.py",
+  "integration_status": "Ready for production deployment"
+}

@@ -9,13 +9,18 @@ import json
 import logging
 from typing import Dict, List, Any, Optional
 from datetime import datetime
+from dotenv import load_dotenv
+
+load_dotenv()
 
 # MCP imports
 from mcp.server.fastmcp import FastMCP
 
-# Snowflake imports  
-import snowflake.connector
-from snowflake.connector import DictCursor
+# Enhanced Snowflake client with MCP integration
+import sys
+sys.path.append(os.path.dirname(__file__))
+from src.snowflake.cortex_analyst_client import cortex_client
+from src.mcp.mcp_snowflake_integration import mcp_integration
 
 # Foundry automation imports
 try:
@@ -65,79 +70,19 @@ if FOUNDRY_AUTOMATION_AVAILABLE:
     except Exception as e:
         logger.error(f"❌ Failed to initialize Foundry automation: {e}")
 
-class SnowflakeClient:
-    def __init__(self):
-        """Initialize Snowflake connection with environment variables for security"""
-        self.connection_params = {
-            'account': os.getenv('SNOWFLAKE_ACCOUNT', 'LI21842-WW07444'),
-            'user': os.getenv('SNOWFLAKE_USER', 'ASH073108'),
-            'password': os.getenv('SNOWFLAKE_PASSWORD', 'Phi1848gam!'),
-            'warehouse': os.getenv('SNOWFLAKE_WAREHOUSE', 'TABLEAU_CONNECT'),
-            'database': os.getenv('SNOWFLAKE_DATABASE', 'RAIDER_DB'),
-            'schema': os.getenv('SNOWFLAKE_SCHEMA', 'SQL_SERVER_DBO')
-        }
-        self.connection = None
-        self.connection_pool = []
-        
-    def connect(self):
-        """Establish connection to Snowflake with retry logic"""
-        max_retries = 3
-        for attempt in range(max_retries):
-            try:
-                self.connection = snowflake.connector.connect(**self.connection_params)
-                logger.info("✅ Connected to Snowflake successfully")
-                return True
-            except Exception as e:
-                logger.error(f"❌ Snowflake connection attempt {attempt + 1} failed: {e}")
-                if attempt == max_retries - 1:
-                    return False
-        return False
-    
-    def execute_query(self, query: str) -> List[Dict[str, Any]]:
-        """Execute SQL query with connection management and error handling"""
-        if not self.connection:
-            if not self.connect():
-                raise Exception("Cannot establish Snowflake connection")
-        
-        try:
-            cursor = self.connection.cursor(DictCursor)
-            cursor.execute(query)
-            results = cursor.fetchall()
-            cursor.close()
-            
-            logger.info(f"✅ Query executed successfully: {len(results)} rows")
-            return results
-            
-        except Exception as e:
-            logger.error(f"❌ Query failed: {e}")
-            # Try to reconnect on connection errors
-            if "connection" in str(e).lower():
-                logger.info("🔄 Attempting to reconnect to Snowflake...")
-                self.connection = None
-                if self.connect():
-                    return self.execute_query(query)  # Retry once
-            raise e
-    
-    def health_check(self) -> Dict[str, Any]:
-        """Health check for monitoring"""
-        try:
-            result = self.execute_query("SELECT CURRENT_USER(), CURRENT_WAREHOUSE(), CURRENT_DATABASE()")
-            return {
-                "status": "healthy",
-                "user": result[0]["CURRENT_USER()"] if result else None,
-                "warehouse": result[0]["CURRENT_WAREHOUSE()"] if result else None,
-                "database": result[0]["CURRENT_DATABASE()"] if result else None,
-                "timestamp": datetime.now().isoformat()
-            }
-        except Exception as e:
-            return {
-                "status": "unhealthy", 
-                "error": str(e),
-                "timestamp": datetime.now().isoformat()
-            }
 
-# Initialize Snowflake client
-sf_client = SnowflakeClient()
+@app.tool()
+def search_orders_with_automation(query: str, filters: Optional[Dict] = None, automation: Optional[Dict] = None) -> Dict[str, Any]:
+    """Search orders with optional MCP automation triggers"""
+    try:
+        result = mcp_integration.execute_with_mcp_integration(
+            f"SELECT * FROM \"dbo\".\"orders\" WHERE {query}",
+            mcp_context=automation
+        )
+        return result
+    except Exception as e:
+        logger.error(f"❌ Automated order search failed: {e}")
+        return {"success": False, "error": str(e)}
 
 @app.tool()
 def search_orders(query: str, filters: Optional[Dict] = None) -> Dict[str, Any]:
@@ -172,7 +117,7 @@ def search_orders(query: str, filters: Optional[Dict] = None) -> Dict[str, Any]:
             LIMIT 50
             """
         
-        results = sf_client.execute_query(sql_query)
+        results = cortex_client.execute_query(sql_query)
         
         # Format results with business context
         if "TMS" in query.upper() and ("VS" in query.upper() or "VERSUS" in query.upper()):
@@ -245,7 +190,7 @@ def revenue_summary(timeframe: str = "week") -> Dict[str, Any]:
         ORDER BY order_count DESC
         """
         
-        results = sf_client.execute_query(query)
+        results = cortex_client.execute_query(query)
         
         # Calculate totals and add business context
         total_orders = sum(int(row['ORDER_COUNT']) if row['ORDER_COUNT'] else 0 for row in results)
@@ -310,7 +255,7 @@ def analyze_customer(analysis_type: str = "top_customers", limit: int = 10) -> D
             LIMIT {limit}
             """
         
-        results = sf_client.execute_query(query)
+        results = cortex_client.execute_query(query)
         
         return {
             "analysis_type": analysis_type,
@@ -353,7 +298,7 @@ def sql_query(query: str) -> Dict[str, Any]:
                 "generated_at": datetime.now().isoformat()
             }
         
-        results = sf_client.execute_query(query)
+        results = cortex_client.execute_query(query)
         
         return {
             "query": query,
@@ -447,9 +392,9 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
 
 @app.tool()
 def health_check() -> Dict[str, Any]:
-    """Health check endpoint for monitoring"""
+    """Health check endpoint for monitoring with MCP integration status"""
     try:
-        return sf_client.health_check()
+        return mcp_integration.health_check_with_mcp()
     except Exception as e:
         return {
             "status": "error",
@@ -463,12 +408,12 @@ if __name__ == "__main__":
     logger.info(f"🔧 Environment: {os.getenv('ENVIRONMENT', 'production')}")
     
     # Test Snowflake connection on startup
-    if sf_client.connect():
+    if cortex_client.connect():
         logger.info("✅ Snowflake connection established")
         
         # Verify database access
         try:
-            health = sf_client.health_check()
+            health = cortex_client.health_check()
             logger.info(f"✅ Health check: {health['status']}")
             if health['status'] == 'healthy':
                 logger.info(f"✅ Connected to {health['database']} as {health['user']}")
