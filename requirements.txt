@@ -18,7 +18,7 @@ structlog>=24.1.0
 tenacity>=8.2.3
 httpx>=0.25.0
 
-# Palantir Foundry Enhancements
-slslogging>=1.0.0
-ontology-sdk>=1.0.0
-foundry-sdk[v2]>=1.0.0
+# Palantir Foundry Enhancements (commented out - not available in public PyPI)
+# slslogging>=1.0.0
+# ontology-sdk>=1.0.0
+# foundry-sdk[v2]>=1.0.0

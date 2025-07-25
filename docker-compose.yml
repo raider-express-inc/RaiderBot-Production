@@ -18,7 +18,7 @@ services:
       - PORT=8000
     restart: unless-stopped
     healthcheck:
-      test: ["CMD", "python", "-c", "from server import sf_client; exit(0 if sf_client.health_check()['status'] == 'healthy' else 1)"]
+      test: ["CMD", "python", "-c", "from server import cortex_client; exit(0 if cortex_client.health_check()['status'] == 'healthy' else 1)"]
       interval: 30s
       timeout: 10s
       retries: 3
