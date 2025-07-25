@@ -16,10 +16,11 @@ load_dotenv()
 # MCP imports
 from mcp.server.fastmcp import FastMCP
 
-# Enhanced Snowflake client
+# Enhanced Snowflake client with MCP integration
 import sys
 sys.path.append(os.path.dirname(__file__))
 from src.snowflake.cortex_analyst_client import cortex_client
+from src.mcp.mcp_snowflake_integration import mcp_integration
 
 # Foundry automation imports
 try:
@@ -69,6 +70,19 @@ if FOUNDRY_AUTOMATION_AVAILABLE:
     except Exception as e:
         logger.error(f"❌ Failed to initialize Foundry automation: {e}")
 
+
+@app.tool()
+def search_orders_with_automation(query: str, filters: Optional[Dict] = None, automation: Optional[Dict] = None) -> Dict[str, Any]:
+    """Search orders with optional MCP automation triggers"""
+    try:
+        result = mcp_integration.execute_with_mcp_integration(
+            f"SELECT * FROM \"dbo\".\"orders\" WHERE {query}",
+            mcp_context=automation
+        )
+        return result
+    except Exception as e:
+        logger.error(f"❌ Automated order search failed: {e}")
+        return {"success": False, "error": str(e)}
 
 @app.tool()
 def search_orders(query: str, filters: Optional[Dict] = None) -> Dict[str, Any]:
@@ -176,7 +190,7 @@ def revenue_summary(timeframe: str = "week") -> Dict[str, Any]:
         ORDER BY order_count DESC
         """
         
-        results = sf_client.execute_query(query)
+        results = cortex_client.execute_query(query)
         
         # Calculate totals and add business context
         total_orders = sum(int(row['ORDER_COUNT']) if row['ORDER_COUNT'] else 0 for row in results)
@@ -241,7 +255,7 @@ def analyze_customer(analysis_type: str = "top_customers", limit: int = 10) -> D
             LIMIT {limit}
             """
         
-        results = sf_client.execute_query(query)
+        results = cortex_client.execute_query(query)
         
         return {
             "analysis_type": analysis_type,
@@ -284,7 +298,7 @@ def sql_query(query: str) -> Dict[str, Any]:
                 "generated_at": datetime.now().isoformat()
             }
         
-        results = sf_client.execute_query(query)
+        results = cortex_client.execute_query(query)
         
         return {
             "query": query,
@@ -378,9 +392,9 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
 
 @app.tool()
 def health_check() -> Dict[str, Any]:
-    """Health check endpoint for monitoring"""
+    """Health check endpoint for monitoring with MCP integration status"""
     try:
-        return cortex_client.health_check()
+        return mcp_integration.health_check_with_mcp()
     except Exception as e:
         return {
             "status": "error",
@@ -394,7 +408,7 @@ if __name__ == "__main__":
     logger.info(f"🔧 Environment: {os.getenv('ENVIRONMENT', 'production')}")
     
     # Test Snowflake connection on startup
-    if sf_client.connect():
+    if cortex_client.connect():
         logger.info("✅ Snowflake connection established")
         
         # Verify database access
