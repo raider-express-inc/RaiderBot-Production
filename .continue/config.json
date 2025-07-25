@@ -57,6 +57,16 @@
       "name": "raiderbot_deployment",
       "description": "Deploy consolidated RaiderBot system",
       "prompt": "Deploy RaiderBot with Workshop app, AIP agent, and quarterback functions to Foundry"
+    },
+    {
+      "name": "raiderbot_deployment",
+      "description": "Deploy consolidated RaiderBot system",
+      "prompt": "Deploy RaiderBot with Workshop app, AIP agent, and quarterback functions to Foundry"
+    },
+    {
+      "name": "raiderbot_deployment",
+      "description": "Deploy consolidated RaiderBot system",
+      "prompt": "Deploy RaiderBot with Workshop app, AIP agent, and quarterback functions to Foundry"
     }
   ],
   "includePaths": [
