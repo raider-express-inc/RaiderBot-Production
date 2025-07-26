@@ -86,6 +86,30 @@ class AIPAgentTester:
         
         return results
     
+    def test_instruction_deployment(self) -> Dict[str, Any]:
+        """Test that comprehensive instructions are deployed"""
+        logger.info("📋 Testing instruction deployment...")
+        
+        from src.aip.agent_config import AIP_AGENT_CONFIG
+        
+        instructions = AIP_AGENT_CONFIG.get("instructions", {})
+        
+        results = {
+            "instructions_configured": bool(instructions),
+            "system_prompt_exists": bool(instructions.get("system_prompt")),
+            "behavioral_guidelines_count": len(instructions.get("behavioral_guidelines", [])),
+            "example_interactions_count": len(instructions.get("example_interactions", [])),
+            "logistics_expertise": "transportation" in str(instructions).lower(),
+            "german_shepherd_personality": "German Shepherd" in str(instructions)
+        }
+        
+        logger.info(f"   ✅ Instructions configured: {'Yes' if results['instructions_configured'] else 'No'}")
+        logger.info(f"   ✅ System prompt: {'Exists' if results['system_prompt_exists'] else 'Missing'}")
+        logger.info(f"   ✅ Guidelines: {results['behavioral_guidelines_count']} configured")
+        logger.info(f"   ✅ Examples: {results['example_interactions_count']} configured")
+        
+        return results
+    
     def test_authentication_status(self) -> Dict[str, Any]:
         """Test authentication status based on token configuration"""
         logger.info("🔐 Testing authentication status...")
@@ -134,13 +158,15 @@ class AIPAgentTester:
         tools_results = self.test_core_tools_configuration()
         auth_results = self.test_authentication_status()
         workshop_results = self.test_workshop_integration()
+        instruction_results = self.test_instruction_deployment()
         
         critical_checks = [
             env_results['foundry_token_configured'],
             env_results['agent_rid_configured'],
             access_results['browser_accessible'],
             access_results['responds_to_queries'],
-            tools_results['tools_configured']
+            tools_results['tools_configured'],
+            instruction_results['instructions_configured']
         ]
         
         overall_status = "FUNCTIONAL" if all(critical_checks) else "NEEDS_ATTENTION"
@@ -156,13 +182,14 @@ class AIPAgentTester:
             "core_tools": tools_results,
             "authentication": auth_results,
             "workshop_integration": workshop_results,
-            "recommendations": self._generate_recommendations(env_results, auth_results),
-            "timestamp": "2025-01-26T01:05:48Z"
+            "instruction_deployment": instruction_results,
+            "recommendations": self._generate_recommendations(env_results, auth_results, instruction_results),
+            "timestamp": "2025-01-26T17:11:14Z"
         }
         
         return report
     
-    def _generate_recommendations(self, env_results: Dict, auth_results: Dict) -> List[str]:
+    def _generate_recommendations(self, env_results: Dict, auth_results: Dict, instruction_results: Dict) -> List[str]:
         """Generate recommendations based on test results"""
         recommendations = []
         
@@ -175,8 +202,14 @@ class AIPAgentTester:
         if not auth_results['token_format_valid']:
             recommendations.append("Verify JWT token format and validity")
         
+        if not instruction_results['instructions_configured']:
+            recommendations.append("Deploy comprehensive instructions to agent")
+        
+        if not instruction_results['system_prompt_exists']:
+            recommendations.append("Configure system prompt with logistics expertise")
+        
         if not recommendations:
-            recommendations.append("Agent is fully functional - ready for production use")
+            recommendations.append("Agent is fully functional with comprehensive instructions - ready for production use")
         
         return recommendations
 

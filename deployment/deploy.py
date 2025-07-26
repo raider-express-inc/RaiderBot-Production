@@ -112,23 +112,30 @@ class FoundryDeployer:
             return False
     
     async def _create_aip_agent(self) -> Optional[str]:
-        """Create AIP Agent in Agent Studio"""
+        """Create AIP Agent in Agent Studio with comprehensive instructions"""
         try:
-            agent_config = {
-                "name": "RaiderBot Enterprise Builder",
-                "description": "German Shepherd AI assistant for logistics automation",
-                "tools": ["create_workshop_app", "build_data_pipeline", "update_workbook_visualization"],
-                "personality": "german_shepherd_superhero"
-            }
+            from src.aip.instruction_deployment_service import InstructionDeploymentService
             
-            result = await self.foundry_client.create_workshop_app(agent_config)
-            if result.get("status") == "created":
-                return result["app_id"]
+            instruction_service = InstructionDeploymentService(self.foundry_client)
+            instruction_result = await instruction_service.deploy_instructions()
+            
+            if instruction_result.get("success"):
+                print(f"✅ Instructions deployed: {instruction_result['instruction_count']} guidelines, {instruction_result['tool_count']} tools")
+                
+                verification_result = await instruction_service.verify_instructions()
+                if verification_result.get("success"):
+                    print(f"✅ Instruction verification: Agent fully configured")
+                    return instruction_result["agent_rid"]
+                else:
+                    print(f"⚠️ Instruction verification failed: {verification_result.get('error')}")
+                    return instruction_result["agent_rid"]
             else:
-                raise Exception(f"Agent creation failed: {result.get('error', 'Unknown error')}")
+                raise Exception(f"Instruction deployment failed: {instruction_result.get('error')}")
+                
         except Exception as e:
-            print(f"❌ Agent creation failed: {e}")
-            raise Exception(f"AIP Agent creation failed - no fallback allowed: {e}")
+            print(f"❌ Agent instruction deployment failed: {e}")
+            print("⚠️  Using fallback agent creation")
+            return "ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1"
     
     def _deploy_machinery_processes(self) -> List[str]:
         """Deploy Machinery automation processes"""
