@@ -1,0 +1,150 @@
+{
+  "raiderbot_palantir": {
+    "token_name": "raiderbot_palantir",
+    "working_endpoints": [],
+    "failed_endpoints": [
+      {
+        "endpoint": "/workspace/api/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/api/workshop/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/api/v2/workspace/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/compass/api/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/aip-studio/agents",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/agent-studio-app/view/latest/ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1",
+        "status": 307,
+        "error": "No response body"
+      }
+    ],
+    "errors": []
+  },
+  "foundry_mcp": {
+    "token_name": "foundry_mcp",
+    "working_endpoints": [],
+    "failed_endpoints": [
+      {
+        "endpoint": "/workspace/api/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/api/workshop/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/api/v2/workspace/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/compass/api/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/aip-studio/agents",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/agent-studio-app/view/latest/ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1",
+        "status": 307,
+        "error": "No response body"
+      }
+    ],
+    "errors": []
+  },
+  "app_sdk": {
+    "token_name": "app_sdk",
+    "working_endpoints": [],
+    "failed_endpoints": [
+      {
+        "endpoint": "/workspace/api/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/api/workshop/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/api/v2/workspace/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/compass/api/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/aip-studio/agents",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/agent-studio-app/view/latest/ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1",
+        "status": 307,
+        "error": "No response body"
+      }
+    ],
+    "errors": []
+  },
+  "foundry_user": {
+    "token_name": "foundry_user",
+    "working_endpoints": [],
+    "failed_endpoints": [
+      {
+        "endpoint": "/workspace/api/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/api/workshop/applications",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/api/v2/workspace/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/compass/api/applications",
+        "status": 404,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/aip-studio/agents",
+        "status": 307,
+        "error": "No response body"
+      },
+      {
+        "endpoint": "/workspace/agent-studio-app/view/latest/ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1",
+        "status": 307,
+        "error": "No response body"
+      }
+    ],
+    "errors": []
+  }
+}

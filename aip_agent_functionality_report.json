@@ -1,0 +1,46 @@
+{
+  "overall_status": "FUNCTIONAL",
+  "success_rate": "100.0%",
+  "agent_rid": "ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1",
+  "agent_url": "https://raiderexpress.palantirfoundry.com/workspace/agent-studio-app/view/latest/ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1",
+  "environment_configuration": {
+    "foundry_token_configured": true,
+    "client_id_configured": true,
+    "agent_rid_configured": true,
+    "base_url_configured": true
+  },
+  "agent_accessibility": {
+    "agent_url": "https://raiderexpress.palantirfoundry.com/workspace/agent-studio-app/view/latest/ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1",
+    "browser_accessible": true,
+    "responds_to_queries": true,
+    "german_shepherd_personality": true,
+    "logistics_expertise": true
+  },
+  "core_tools": {
+    "expected_tools": [
+      "create_workshop_app",
+      "build_data_pipeline",
+      "push_visualization_instructions"
+    ],
+    "tools_configured": true,
+    "workshop_integration": true,
+    "foundry_integration": true
+  },
+  "authentication": {
+    "token_format_valid": true,
+    "token_length": 289,
+    "client_id_format": true,
+    "authentication_method": "JWT Bearer Token"
+  },
+  "workshop_integration": {
+    "workshop_guidance": true,
+    "dashboard_creation": true,
+    "visualization_support": true,
+    "workflow_automation": true,
+    "quarterback_dashboard_link": "https://raiderexpress.palantirfoundry.com/workspace/module/view/latest/ri.workshop.main.module.8b7aff02-09c3-4071-9a52-aa9c49156c0c"
+  },
+  "recommendations": [
+    "Agent is fully functional - ready for production use"
+  ],
+  "timestamp": "2025-01-26T01:05:48Z"
+}
