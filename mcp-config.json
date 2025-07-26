@@ -1,0 +1,104 @@
+{
+  "servers": {
+    "snowflake": {
+      "command": "python",
+      "args": ["/home/ubuntu/repos/RaiderBot-Production/server.py"],
+      "env": {
+        "SNOWFLAKE_ACCOUNT": "LI21842-WW07444",
+        "SNOWFLAKE_USER": "ASH073108",
+        "SNOWFLAKE_ACCESS_TOKEN": "${SNOWFLAKE_ACCESS_TOKEN}",
+        "SNOWFLAKE_WAREHOUSE": "TABLEAU_CONNECT",
+        "SNOWFLAKE_DATABASE": "MCLEOD_DB",
+        "SNOWFLAKE_SCHEMA": "dbo"
+      }
+    },
+    "foundry": {
+      "command": "python",
+      "args": ["/home/ubuntu/repos/raiderbot-foundry-functions/foundry-mcp-server/server.py"],
+      "env": {
+        "FOUNDRY_BASE_URL": "${FOUNDRY_BASE_URL}",
+        "FOUNDRY_TOKEN": "${FOUNDRY_TOKEN}",
+        "FOUNDRY_CLIENT_ID": "${FOUNDRY_CLIENT_ID}"
+      }
+    },
+    "github": {
+      "command": "python",
+      "args": ["/home/ubuntu/.devin/mcp-servers/github-mcp/server.py"],
+      "env": {
+        "GITHUB_TOKEN": "${GITHUB_TOKEN}",
+        "GITHUB_API_URL": "https://api.github.com"
+      }
+    },
+    "aws": {
+      "command": "python", 
+      "args": ["/home/ubuntu/.devin/mcp-servers/aws-mcp/server.py"],
+      "env": {
+        "AWS_ACCESS_KEY_ID": "${AWS_ACCESS_KEY_ID}",
+        "AWS_SECRET_ACCESS_KEY": "${AWS_SECRET_ACCESS_KEY}",
+        "AWS_DEFAULT_REGION": "us-east-1"
+      }
+    },
+    "slack": {
+      "command": "python",
+      "args": ["/home/ubuntu/.devin/mcp-servers/slack-mcp/server.py"],
+      "env": {
+        "SLACK_BOT_TOKEN": "${SLACK_BOT_TOKEN}",
+        "SLACK_APP_TOKEN": "${SLACK_APP_TOKEN}"
+      }
+    },
+    "docker": {
+      "command": "python",
+      "args": ["/home/ubuntu/.devin/mcp-servers/docker-mcp/server.py"],
+      "env": {
+        "DOCKER_HOST": "unix:///var/run/docker.sock"
+      }
+    },
+    "zapier": {
+      "command": "python",
+      "args": ["/home/ubuntu/.devin/mcp-servers/zapier-mcp/server.py"],
+      "env": {
+        "ZAPIER_API_KEY": "${ZAPIER_API_KEY}",
+        "ZAPIER_WEBHOOK_URL": "${ZAPIER_WEBHOOK_URL}",
+        "MCP_ZAPIER_ENABLED": "true"
+      }
+    },
+    "semantic-production": {
+      "command": "python",
+      "args": ["/home/ubuntu/repos/raiderbot-platform/semantic-layer/mcp_server_production.py"],
+      "env": {
+        "SNOWFLAKE_ACCOUNT": "LI21842-WW07444",
+        "SNOWFLAKE_USER": "ASH073108",
+        "SNOWFLAKE_ACCESS_TOKEN": "${SNOWFLAKE_ACCESS_TOKEN}",
+        "SNOWFLAKE_WAREHOUSE": "TABLEAU_CONNECT",
+        "SNOWFLAKE_DATABASE": "MCLEOD_DB",
+        "SNOWFLAKE_SCHEMA": "dbo"
+      }
+    },
+    "semantic-memory": {
+      "command": "python",
+      "args": ["/home/ubuntu/repos/raiderbot-platform/semantic-layer/mcp_server_with_memory.py"],
+      "env": {
+        "SNOWFLAKE_ACCOUNT": "LI21842-WW07444",
+        "SNOWFLAKE_USER": "ASH073108",
+        "SNOWFLAKE_ACCESS_TOKEN": "${SNOWFLAKE_ACCESS_TOKEN}",
+        "SNOWFLAKE_WAREHOUSE": "TABLEAU_CONNECT",
+        "SNOWFLAKE_DATABASE": "MCLEOD_DB",
+        "SNOWFLAKE_SCHEMA": "dbo"
+      }
+    },
+    "semantic-ai": {
+      "command": "python",
+      "args": ["/home/ubuntu/repos/raiderbot-platform/mcp-enhanced-ai/server.py"],
+      "env": {
+        "SNOWFLAKE_ACCOUNT": "LI21842-WW07444",
+        "SNOWFLAKE_USER": "ASH073108",
+        "SNOWFLAKE_ACCESS_TOKEN": "${SNOWFLAKE_ACCESS_TOKEN}",
+        "SNOWFLAKE_WAREHOUSE": "TABLEAU_CONNECT",
+        "SNOWFLAKE_DATABASE": "MCLEOD_DB",
+        "SNOWFLAKE_SCHEMA": "dbo",
+        "OPENAI_API_KEY": "${OPENAI_API_KEY}",
+        "ANTHROPIC_API_KEY": "${ANTHROPIC_API_KEY}"
+      }
+    }
+  }
+}
