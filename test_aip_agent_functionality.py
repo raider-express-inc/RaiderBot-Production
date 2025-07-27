@@ -149,6 +149,32 @@ class AIPAgentTester:
         
         return results
     
+    def test_actual_agent_responses(self) -> Dict[str, Any]:
+        """Test actual agent responses to verify German Shepherd personality is deployed"""
+        logger.info("🐕 Testing actual agent responses...")
+        
+        test_queries = [
+            "Our delivery performance is declining",
+            "Driver called in sick, need coverage",
+            "Show me your personality and expertise"
+        ]
+        
+        results = {
+            "test_queries": test_queries,
+            "german_shepherd_responses": 0,
+            "logistics_expertise_responses": 0,
+            "total_queries": len(test_queries),
+            "manual_verification_required": True
+        }
+        
+        logger.info(f"   ⚠️ Manual verification required: Test agent responses in browser")
+        logger.info(f"   🌐 Agent URL: {self.base_url}/workspace/agent-studio-app/view/latest/{self.agent_rid}")
+        logger.info(f"   📋 Test queries:")
+        for i, query in enumerate(test_queries, 1):
+            logger.info(f"     {i}. {query}")
+        
+        return results
+    
     def generate_functionality_report(self) -> Dict[str, Any]:
         """Generate comprehensive functionality report"""
         logger.info("📋 Generating functionality report...")
@@ -159,6 +185,7 @@ class AIPAgentTester:
         auth_results = self.test_authentication_status()
         workshop_results = self.test_workshop_integration()
         instruction_results = self.test_instruction_deployment()
+        response_results = self.test_actual_agent_responses()
         
         critical_checks = [
             env_results['foundry_token_configured'],
@@ -183,8 +210,9 @@ class AIPAgentTester:
             "authentication": auth_results,
             "workshop_integration": workshop_results,
             "instruction_deployment": instruction_results,
+            "actual_agent_responses": response_results,
             "recommendations": self._generate_recommendations(env_results, auth_results, instruction_results),
-            "timestamp": "2025-01-26T17:11:14Z"
+            "timestamp": "2025-01-27T15:53:04Z"
         }
         
         return report

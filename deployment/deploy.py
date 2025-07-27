@@ -115,12 +115,14 @@ class FoundryDeployer:
         """Create AIP Agent in Agent Studio with comprehensive instructions"""
         try:
             from src.aip.instruction_deployment_service import InstructionDeploymentService
+            from src.aip.browser_instruction_deployment import BrowserInstructionDeployment
             
             instruction_service = InstructionDeploymentService(self.foundry_client)
             instruction_result = await instruction_service.deploy_instructions()
             
             if instruction_result.get("success"):
-                print(f"✅ Instructions deployed: {instruction_result['instruction_count']} guidelines, {instruction_result['tool_count']} tools")
+                print(f"✅ Instructions deployed via API: {instruction_result['instruction_count']} guidelines, {instruction_result['tool_count']} tools")
+                print(f"✅ Successful endpoint: {instruction_result.get('successful_endpoint')}")
                 
                 verification_result = await instruction_service.verify_instructions()
                 if verification_result.get("success"):
@@ -130,11 +132,30 @@ class FoundryDeployer:
                     print(f"⚠️ Instruction verification failed: {verification_result.get('error')}")
                     return instruction_result["agent_rid"]
             else:
-                raise Exception(f"Instruction deployment failed: {instruction_result.get('error')}")
+                print(f"⚠️ API deployment failed: {instruction_result.get('error')}")
+                print(f"⚠️ Attempted endpoints: {instruction_result.get('attempted_endpoints', [])}")
+                print("🔄 Attempting browser-based deployment...")
+                
+                browser_service = BrowserInstructionDeployment(self.agent_rid)
+                browser_result = await browser_service.deploy_through_browser()
+                
+                if browser_result.get("success"):
+                    print(f"✅ Instructions prepared for browser deployment: {browser_result['guidelines_count']} guidelines")
+                    print(f"🌐 Manual deployment required at: {browser_service.agent_url}")
+                    
+                    deployment_instructions = browser_service.get_deployment_instructions()
+                    print("📋 Manual deployment steps:")
+                    for step in deployment_instructions["manual_steps"]:
+                        print(f"   {step}")
+                    
+                    return self.agent_rid
+                else:
+                    print(f"❌ Browser deployment also failed: {browser_result.get('error')}")
+                    raise Exception(f"Both API and browser instruction deployment failed")
                 
         except Exception as e:
             print(f"❌ Agent instruction deployment failed: {e}")
-            print("⚠️  Using fallback agent creation")
+            print("⚠️ Using fallback agent creation")
             return "ri.aip-agents..agent.e6e9ff2f-0952-4774-98b5-4388a96ddbf1"
     
     def _deploy_machinery_processes(self) -> List[str]:
