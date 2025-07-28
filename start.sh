@@ -33,10 +33,11 @@ echo "✅ Docker MCP server started"
 python ~/.devin/mcp-servers/zapier-mcp/server.py > ~/.devin/logs/zapier-mcp.log 2>&1 &
 echo "✅ Zapier MCP server started"
 
-cd /home/ubuntu/repos/raiderbot-platform/semantic-layer
-python mcp_server_production.py > ~/.devin/logs/semantic-production.log 2>&1 &
-echo "✅ Semantic Production MCP server started"
+cd /home/ubuntu/repos/RaiderBot-Production/src/mcp
+python unified_mcp_server.py > ~/.devin/logs/raiderbot-unified.log 2>&1 &
+echo "✅ Unified RaiderBot MCP server started"
 
+cd /home/ubuntu/repos/raiderbot-platform/semantic-layer
 python mcp_server_with_memory.py > ~/.devin/logs/semantic-memory.log 2>&1 &
 echo "✅ Semantic Memory MCP server started"
 
