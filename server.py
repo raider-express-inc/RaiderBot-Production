@@ -19,7 +19,8 @@ from mcp.server.fastmcp import FastMCP
 # Enhanced Snowflake client with MCP integration
 import sys
 sys.path.append(os.path.dirname(__file__))
-from src.snowflake.cortex_analyst_client import cortex_client
+from src.snowflake.unified_connection import snowflake_client
+from src.foundry.quarterback_functions import process_user_query, autonomous_decision_making
 from src.mcp.mcp_snowflake_integration import mcp_integration
 
 # Foundry automation imports
@@ -117,7 +118,7 @@ def search_orders(query: str, filters: Optional[Dict] = None) -> Dict[str, Any]:
             LIMIT 50
             """
         
-        results = cortex_client.execute_query(sql_query)
+        results = snowflake_client.execute_query(sql_query)["rows"]
         
         # Format results with business context
         if "TMS" in query.upper() and ("VS" in query.upper() or "VERSUS" in query.upper()):
@@ -190,7 +191,7 @@ def revenue_summary(timeframe: str = "week") -> Dict[str, Any]:
         ORDER BY order_count DESC
         """
         
-        results = cortex_client.execute_query(query)
+        results = snowflake_client.execute_query(query)["rows"]
         
         # Calculate totals and add business context
         total_orders = sum(int(row['ORDER_COUNT']) if row['ORDER_COUNT'] else 0 for row in results)
@@ -255,7 +256,7 @@ def analyze_customer(analysis_type: str = "top_customers", limit: int = 10) -> D
             LIMIT {limit}
             """
         
-        results = cortex_client.execute_query(query)
+        results = snowflake_client.execute_query(query)["rows"]
         
         return {
             "analysis_type": analysis_type,
@@ -298,7 +299,7 @@ def sql_query(query: str) -> Dict[str, Any]:
                 "generated_at": datetime.now().isoformat()
             }
         
-        results = cortex_client.execute_query(query)
+        results = snowflake_client.execute_query(query)["rows"]
         
         return {
             "query": query,
@@ -391,6 +392,44 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
         }
 
 @app.tool()
+def quarterback_analysis(scenario: dict) -> dict:
+    """
+    Consolidated quarterback decision making
+    """
+    try:
+        return autonomous_decision_making(scenario)
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.tool()
+def unified_query(query: str, query_type: str = "operational") -> dict:
+    """
+    Unified query interface for all data access
+    """
+    try:
+        if query_type == "operational":
+            sql = f"""
+            SELECT * FROM orders 
+            WHERE order_date >= CURRENT_DATE() - 30
+            AND (customer_name ILIKE '%{query}%' OR route_name ILIKE '%{query}%')
+            LIMIT 50
+            """
+        elif query_type == "maintenance":
+            sql = f"""
+            SELECT * FROM maintenance_records
+            WHERE unit_number ILIKE '%{query}%' OR description ILIKE '%{query}%'
+            ORDER BY repair_date DESC LIMIT 50
+            """
+        else:
+            sql = f"SELECT 'Query type not supported: {query_type}' as message"
+        
+        result = snowflake_client.execute_query(sql)
+        return result
+        
+    except Exception as e:
+        return {"success": False, "error": str(e)}
+
+@app.tool()
 def health_check() -> Dict[str, Any]:
     """Health check endpoint for monitoring with MCP integration status"""
     try:
@@ -408,19 +447,15 @@ if __name__ == "__main__":
     logger.info(f"🔧 Environment: {os.getenv('ENVIRONMENT', 'production')}")
     
     # Test Snowflake connection on startup
-    if cortex_client.connect():
-        logger.info("✅ Snowflake connection established")
-        
-        # Verify database access
-        try:
-            health = cortex_client.health_check()
-            logger.info(f"✅ Health check: {health['status']}")
-            if health['status'] == 'healthy':
-                logger.info(f"✅ Connected to {health['database']} as {health['user']}")
-        except Exception as e:
-            logger.error(f"⚠️ Health check failed: {e}")
-    else:
-        logger.error("❌ Failed to connect to Snowflake")
+    try:
+        test_result = snowflake_client.execute_query("SELECT CURRENT_TIMESTAMP() as test_time")
+        if test_result["success"]:
+            logger.info("✅ Snowflake connection established")
+            logger.info(f"✅ Connected to unified Snowflake client")
+        else:
+            logger.error(f"❌ Failed to connect to Snowflake: {test_result['error']}")
+    except Exception as e:
+        logger.error(f"❌ Failed to connect to Snowflake: {e}")
     
     # Start production server
     logger.info("🌐 Starting MCP server...")
