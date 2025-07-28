@@ -62,9 +62,9 @@
         "MCP_ZAPIER_ENABLED": "true"
       }
     },
-    "semantic-production": {
+    "raiderbot-unified": {
       "command": "python",
-      "args": ["/home/ubuntu/repos/raiderbot-platform/semantic-layer/mcp_server_production.py"],
+      "args": ["/home/ubuntu/repos/RaiderBot-Production/src/mcp/unified_mcp_server.py"],
       "env": {
         "SNOWFLAKE_ACCOUNT": "LI21842-WW07444",
         "SNOWFLAKE_USER": "ASH073108",
