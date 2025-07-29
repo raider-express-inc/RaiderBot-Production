@@ -73,17 +73,31 @@ if FOUNDRY_AUTOMATION_AVAILABLE:
 
 
 @app.tool()
-def search_orders_with_automation(query: str, filters: Optional[Dict] = None, automation: Optional[Dict] = None) -> Dict[str, Any]:
-    """Search orders with optional MCP automation triggers"""
+def multi_agent_query(query: str, agent_type: str = "auto") -> Dict[str, Any]:
+    """
+    Single interface for all employee inquiries with intelligent agent routing
+    Implements platform specification: "One interface where any Raider Express employee can ask anything"
+    """
     try:
-        result = mcp_integration.execute_with_mcp_integration(
-            f"SELECT * FROM \"dbo\".\"orders\" WHERE {query}",
-            mcp_context=automation
-        )
+        logger.info(f"Processing multi-agent query: {query} (agent_type: {agent_type})")
+        
+        result = sema4_integration.process_multi_agent_query(query, agent_type)
+        
+        result["platform_version"] = "2.0.0"
+        result["interface_type"] = "single_agent_studio_interface"
+        result["processing_location"] = "snowflake_native"
+        
         return result
+        
     except Exception as e:
-        logger.error(f"❌ Automated order search failed: {e}")
-        return {"success": False, "error": str(e)}
+        logger.error(f"Multi-agent query failed: {e}")
+        return {
+            "success": False,
+            "error": str(e),
+            "query": query,
+            "agent_type": agent_type,
+            "platform_version": "2.0.0"
+        }
 
 @app.tool()
 def search_orders(query: str, filters: Optional[Dict] = None) -> Dict[str, Any]:
@@ -392,51 +406,85 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
         }
 
 @app.tool()
-def quarterback_analysis(scenario: dict) -> dict:
-    """
-    Consolidated quarterback decision making
-    """
+def operations_query(query: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+    """Operations Agent: Load planning, driver assignments, route optimization"""
     try:
-        return autonomous_decision_making(scenario)
-    except Exception as e:
-        return {"success": False, "error": str(e)}
-
-@app.tool()
-def unified_query(query: str, query_type: str = "operational") -> dict:
-    """
-    Unified query interface for all data access
-    """
-    try:
-        if query_type == "operational":
-            sql = f"""
-            SELECT * FROM orders 
-            WHERE order_date >= CURRENT_DATE() - 30
-            AND (customer_name ILIKE '%{query}%' OR route_name ILIKE '%{query}%')
-            LIMIT 50
-            """
-        elif query_type == "maintenance":
-            sql = f"""
-            SELECT * FROM maintenance_records
-            WHERE unit_number ILIKE '%{query}%' OR description ILIKE '%{query}%'
-            ORDER BY repair_date DESC LIMIT 50
-            """
-        else:
-            sql = f"SELECT 'Query type not supported: {query_type}' as message"
-        
-        result = snowflake_client.execute_query(sql)
+        result = operations_agent(query, context)
+        result["sema4_enhanced"] = sema4_integration.process_multi_agent_query(query, "operations")
         return result
-        
     except Exception as e:
-        return {"success": False, "error": str(e)}
+        return {"success": False, "error": str(e), "agent_type": "operations"}
 
 @app.tool()
-def health_check() -> Dict[str, Any]:
-    """Health check endpoint for monitoring with MCP integration status"""
+def customer_service_query(query: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+    """Customer Service Agent: Shipment tracking, delivery updates, customer inquiries"""
     try:
-        return mcp_integration.health_check_with_mcp()
+        result = customer_service_agent(query, context)
+        result["sema4_enhanced"] = sema4_integration.process_multi_agent_query(query, "customer_service")
+        return result
+    except Exception as e:
+        return {"success": False, "error": str(e), "agent_type": "customer_service"}
+
+@app.tool()
+def financial_query(query: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+    """Financial Agent: Revenue reporting, cost analysis, pricing decisions"""
+    try:
+        result = financial_agent(query, context)
+        result["sema4_enhanced"] = sema4_integration.process_multi_agent_query(query, "financial")
+        return result
+    except Exception as e:
+        return {"success": False, "error": str(e), "agent_type": "financial"}
+
+@app.tool()
+def compliance_query(query: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+    """Compliance Agent: DOT regulations, safety compliance, maintenance schedules"""
+    try:
+        result = compliance_agent(query, context)
+        result["sema4_enhanced"] = sema4_integration.process_multi_agent_query(query, "compliance")
+        return result
+    except Exception as e:
+        return {"success": False, "error": str(e), "agent_type": "compliance"}
+
+@app.tool()
+def knowledge_query(query: str, context: Optional[Dict] = None) -> Dict[str, Any]:
+    """Knowledge Agent: Company policies, procedures, historical decisions"""
+    try:
+        result = knowledge_agent(query, context)
+        result["sema4_enhanced"] = sema4_integration.process_multi_agent_query(query, "knowledge")
+        return result
+    except Exception as e:
+        return {"success": False, "error": str(e), "agent_type": "knowledge"}
+
+@app.tool()
+def platform_health_check() -> Dict[str, Any]:
+    """Health check for multi-agent platform following platform specifications"""
+    try:
+        snowflake_health = snowflake_client.execute_query("SELECT CURRENT_TIMESTAMP() as health_check_time")
+        
+        sema4_health = sema4_integration._check_sema4_availability()
+        
+        agent_health = {}
+        for agent_type in ["operations", "customer_service", "financial", "compliance", "knowledge"]:
+            try:
+                test_result = sema4_integration.process_multi_agent_query(f"test {agent_type} agent", agent_type)
+                agent_health[agent_type] = test_result.get("success", False)
+            except:
+                agent_health[agent_type] = False
+        
+        return {
+            "platform_status": "healthy" if snowflake_health["success"] else "degraded",
+            "snowflake_connected": snowflake_health["success"],
+            "sema4_available": sema4_health,
+            "agent_health": agent_health,
+            "platform_version": "2.0.0",
+            "architecture": "single_interface_multi_agent",
+            "processing_method": "sema4_ai_native_snowflake",
+            "timestamp": datetime.now().isoformat()
+        }
+        
     except Exception as e:
         return {
-            "status": "error",
+            "platform_status": "error",
             "error": str(e),
             "timestamp": datetime.now().isoformat()
         }
