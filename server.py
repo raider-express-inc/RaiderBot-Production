@@ -19,8 +19,9 @@ from mcp.server.fastmcp import FastMCP
 # Enhanced Snowflake client with MCP integration
 import sys
 sys.path.append(os.path.dirname(__file__))
-from src.snowflake.unified_connection import snowflake_client
-from src.foundry.quarterback_functions import process_user_query, autonomous_decision_making
+from src.snowflake.mcp_snowflake_client import mcp_snowflake_client as snowflake_client
+from src.foundry.quarterback_functions import operations_agent, customer_service_agent, financial_agent, compliance_agent, knowledge_agent
+from src.sema4.sema4_integration_service import sema4_integration
 from src.mcp.mcp_snowflake_integration import mcp_integration
 
 # Foundry automation imports
