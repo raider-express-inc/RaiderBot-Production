@@ -1,7 +1,7 @@
 #!/usr/bin/env python3
 """
-Official Snowflake Python connector implementation
-Following Snowflake's recommended approach for Python integration
+Enhanced Snowflake client using official CLI and Python connector
+Implements user-recommended approach: CLI for terminal operations, Python connector for code
 """
 
 import os
@@ -13,11 +13,11 @@ from typing import Dict, List, Any, Optional
 
 logger = logging.getLogger(__name__)
 
-class SnowflakeConnection:
-    """Official Snowflake Python connector implementation"""
+class EnhancedSnowflakeClient:
+    """Official Snowflake CLI + Python connector implementation"""
     
     def __init__(self):
-        """Initialize with official Snowflake CLI and Python connector"""
+        """Initialize with official Snowflake tools"""
         self.connection = None
         self.cli_available = self._check_cli_availability()
         
@@ -35,7 +35,7 @@ class SnowflakeConnection:
             'autocommit': True
         }
         
-        logger.info("Initialized official Snowflake CLI and Python connector")
+        logger.info("Initialized enhanced Snowflake client with official tools")
         logger.info(f"CLI available: {self.cli_available}")
     
     def _check_cli_availability(self) -> bool:
@@ -91,7 +91,7 @@ class SnowflakeConnection:
                 'method': 'snowflake_cli'
             }
     
-    def connect(self) -> bool:
+    def connect_python_connector(self) -> bool:
         """Establish connection using official Snowflake Python connector"""
         try:
             logger.info("Connecting using official Snowflake Python connector...")
@@ -105,7 +105,7 @@ class SnowflakeConnection:
             return True
             
         except Exception as e:
-            logger.error(f"❌ Connection failed: {e}")
+            logger.error(f"❌ Python connector connection failed: {e}")
             return False
     
     def execute_query(self, query: str) -> Optional[List[Any]]:
@@ -121,7 +121,7 @@ class SnowflakeConnection:
         
         try:
             if not self.connection:
-                if not self.connect():
+                if not self.connect_python_connector():
                     return None
             
             cursor = self.connection.cursor()
@@ -142,7 +142,7 @@ class SnowflakeConnection:
     def health_check(self) -> Dict[str, Any]:
         """Perform health check using official tools"""
         if self.cli_available:
-            cli_result = self.execute_via_cli("SELECT CURRENT_TIMESTAMP() as test_time")
+            cli_result = self.execute_via_cli("SELECT CURRENT_TIMESTAMP() as test_time, CURRENT_DATABASE() as db, CURRENT_SCHEMA() as schema")
             if cli_result and cli_result.get('success'):
                 return {
                     "success": True,
@@ -154,17 +154,17 @@ class SnowflakeConnection:
         
         try:
             if not self.connection:
-                if not self.connect():
+                if not self.connect_python_connector():
                     return {"success": False, "error": "Connection failed"}
             
-            result = self.execute_query("SELECT CURRENT_TIMESTAMP() as test_time")
+            result = self.execute_query("SELECT CURRENT_TIMESTAMP() as test_time, CURRENT_DATABASE() as db, CURRENT_SCHEMA() as schema")
             if result:
                 return {
                     "success": True,
                     "timestamp": result[0][0],
-                    "method": "python_connector",
-                    "database": self.config['database'],
-                    "schema": self.config['schema']
+                    "database": result[0][1],
+                    "schema": result[0][2],
+                    "method": "python_connector"
                 }
             else:
                 return {"success": False, "error": "Query execution failed"}
@@ -172,33 +172,30 @@ class SnowflakeConnection:
         except Exception as e:
             return {"success": False, "error": str(e)}
     
-    def natural_language_query(self, query: str) -> Dict[str, Any]:
-        """Process natural language query using Cortex capabilities"""
+    def test_mcleod_data_access(self) -> Dict[str, Any]:
+        """Test access to MCLEOD_DB.dbo data"""
         try:
-            cortex_query = f"""
-            SELECT SNOWFLAKE.CORTEX.COMPLETE(
-                'llama3-8b',
-                'Convert this natural language query to SQL for MCLEOD_DB.dbo schema: {query}'
-            ) as sql_suggestion
-            """
+            orders_query = 'SELECT COUNT(*) as order_count FROM "MCLEOD_DB"."dbo"."orders" LIMIT 1'
+            orders_result = self.execute_query(orders_query)
             
-            result = self.execute_query(cortex_query)
-            if result:
-                sql_suggestion = result[0][0]
+            if orders_result:
+                order_count = orders_result[0][0]
+                logger.info(f"✅ Found {order_count} orders in MCLEOD_DB.dbo.orders")
                 
-                data_result = self.execute_query(sql_suggestion)
+                structure_query = 'DESCRIBE TABLE "MCLEOD_DB"."dbo"."orders"'
+                structure_result = self.execute_query(structure_query)
                 
                 return {
                     "success": True,
-                    "original_query": query,
-                    "sql_suggestion": sql_suggestion,
-                    "data": data_result
+                    "order_count": order_count,
+                    "table_structure": len(structure_result) if structure_result else 0,
+                    "database": "MCLEOD_DB",
+                    "schema": "dbo"
                 }
             else:
-                return {"success": False, "error": "Cortex query failed"}
+                return {"success": False, "error": "Could not access orders table"}
                 
         except Exception as e:
-            logger.error(f"❌ Natural language query failed: {e}")
             return {"success": False, "error": str(e)}
     
     def close(self):
@@ -208,6 +205,7 @@ class SnowflakeConnection:
             self.connection = None
             logger.info("Connection closed")
 
-snowflake_client = SnowflakeConnection()
+enhanced_snowflake_client = EnhancedSnowflakeClient()
 
-CortexAnalystClient = SnowflakeConnection
+snowflake_client = enhanced_snowflake_client
+CortexAnalystClient = EnhancedSnowflakeClient
