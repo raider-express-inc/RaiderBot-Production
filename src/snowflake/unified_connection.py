@@ -24,16 +24,32 @@ class UnifiedSnowflakeConnection:
     def get_connection(self, database: str = "MCLEOD_DB", schema: str = "dbo"):
         """Get Snowflake connection with unified configuration"""
         if self._connection is None or self._connection.is_closed():
-            self._connection = snowflake.connector.connect(
-                user=os.getenv('SNOWFLAKE_USER', 'ASH073108'),
-                authenticator='oauth',
-                token=os.getenv('SNOWFLAKE_ACCESS_TOKEN'),
-                account=os.getenv('SNOWFLAKE_ACCOUNT', 'LI21842-WW07444'),
-                warehouse=os.getenv('SNOWFLAKE_WAREHOUSE', 'TABLEAU_CONNECT'),
-                database=database,
-                schema=schema,
-                client_session_keep_alive=True
-            )
+            password = os.getenv('SNOWFLAKE_PASSWORD')
+            access_token = os.getenv('SNOWFLAKE_ACCESS_TOKEN')
+            
+            if password:
+                self._connection = snowflake.connector.connect(
+                    user=os.getenv('SNOWFLAKE_USER', 'ASH073108'),
+                    password=password,
+                    account=os.getenv('SNOWFLAKE_ACCOUNT', 'LI21842-WW0744'),
+                    warehouse=os.getenv('SNOWFLAKE_WAREHOUSE', 'TABLEAU_CONNECT'),
+                    database=database,
+                    schema=schema,
+                    client_session_keep_alive=True
+                )
+            elif access_token:
+                self._connection = snowflake.connector.connect(
+                    user=os.getenv('SNOWFLAKE_USER', 'ASH073108'),
+                    authenticator='oauth',
+                    token=access_token,
+                    account=os.getenv('SNOWFLAKE_ACCOUNT', 'LI21842-WW0744'),
+                    warehouse=os.getenv('SNOWFLAKE_WAREHOUSE', 'TABLEAU_CONNECT'),
+                    database=database,
+                    schema=schema,
+                    client_session_keep_alive=True
+                )
+            else:
+                raise ValueError("Either SNOWFLAKE_PASSWORD or SNOWFLAKE_ACCESS_TOKEN must be provided")
         return self._connection
     
     def execute_query(self, sql: str, database: str = "MCLEOD_DB", schema: str = "dbo"):
