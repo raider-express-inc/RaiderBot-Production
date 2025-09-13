@@ -1,0 +1,69 @@
+
+<!DOCTYPE html>
+<html>
+<head>
+    <title>RaiderBot Status</title>
+    <meta http-equiv="refresh" content="30">
+    <style>
+        body { font-family: Arial, sans-serif; margin: 40px; }
+        .healthy { color: green; }
+        .unhealthy { color: red; }
+        .degraded { color: orange; }
+        .service { margin: 10px 0; padding: 10px; border: 1px solid #ccc; }
+    </style>
+</head>
+<body>
+    <h1>RaiderBot System Status</h1>
+    <p>Overall Status: <span class="degraded">DEGRADED</span></p>
+    <p>Services: 0/5 healthy</p>
+    <p>Last Updated: 2025-09-13T19:42:03.460986Z</p>
+    
+    <h2>Service Details</h2>
+
+    <div class="service">
+        <h3>Foundry Functions - <span class="unhealthy">UNHEALTHY</span></h3>
+        <p>URL: https://raiderexpress.palantirfoundry.com/functions/ri.raiderbot/dataset_run_sql:v1/health</p>
+        <p>Latency: 455ms</p>
+        <p>Status Code: 404</p>
+        
+        
+    </div>
+
+    <div class="service">
+        <h3>LangGraph Service - <span class="unhealthy">UNHEALTHY</span></h3>
+        <p>URL: https://raiderbot-brain.raiderexpress.palantirfoundry.com/healthz</p>
+        <p>Latency: 474ms</p>
+        <p>Status Code: 307</p>
+        
+        <p><strong>⚠️ Redirect Detected</strong></p>
+    </div>
+
+    <div class="service">
+        <h3>Semantic Server - <span class="error">ERROR</span></h3>
+        <p>URL: https://raiderbot-semantic.raiderexpress.palantirfoundry.com/_health</p>
+        <p>Latency: 273ms</p>
+        <p>Status Code: N/A</p>
+        <p>Error: [SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'raiderbot-semantic.raiderexpress.palantirfoundry.com'. (_ssl.c:1000)</p>
+        
+    </div>
+
+    <div class="service">
+        <h3>MCP Server - <span class="error">ERROR</span></h3>
+        <p>URL: http://localhost:8080/readyz</p>
+        <p>Latency: 51ms</p>
+        <p>Status Code: N/A</p>
+        <p>Error: All connection attempts failed</p>
+        
+    </div>
+
+    <div class="service">
+        <h3>Pipedream API - <span class="error">ERROR</span></h3>
+        <p>URL: http://localhost:8080/mcp/pipedream/get_me</p>
+        <p>Latency: 27ms</p>
+        <p>Status Code: N/A</p>
+        <p>Error: All connection attempts failed</p>
+        
+    </div>
+
+</body>
+</html>
