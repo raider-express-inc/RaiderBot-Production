@@ -1,0 +1,26 @@
+{
+  "name": "pipedream.trigger_event",
+  "description": "Emit an event to a Pipedream source to trigger a workflow.",
+  "input_schema": {
+    "type": "object",
+    "required": ["source_id", "payload"],
+    "properties": {
+      "source_id": { 
+        "type": "string", 
+        "description": "Pipedream source ID" 
+      },
+      "payload": { 
+        "type": "object", 
+        "description": "Event payload" 
+      }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "success": { "type": "boolean" },
+      "data": { "type": "object" },
+      "error": { "type": "string" }
+    }
+  }
+}

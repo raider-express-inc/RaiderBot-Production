@@ -46,6 +46,11 @@ class StatusPage:
                 "name": "MCP Server",
                 "url": f"{self.config['mcp_base']}/readyz",
                 "type": "mcp"
+            },
+            {
+                "name": "Pipedream API",
+                "url": f"http://localhost:8080/mcp/pipedream/get_me",
+                "type": "pipedream"
             }
         ]
     

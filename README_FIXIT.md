@@ -42,6 +42,10 @@ export SNOWFLAKE_DATABASE="MCLEOD_DB"
 export SNOWFLAKE_SCHEMA="dbo"
 export SNOWFLAKE_WAREHOUSE="TABLEAU_CONNECT"
 export SNOWFLAKE_ROLE="ACCOUNTADMIN"
+
+# Pipedream Integration
+export PIPEDREAM_API_KEY="your-pipedream-api-key"
+export PIPEDREAM_API_BASE="https://api.pipedream.com/v1"
 ```
 
 ## Implementation Status
@@ -97,6 +101,9 @@ curl -f https://raiderbot-semantic.raiderexpress.palantirfoundry.com/_health
 
 # Test MCP Server
 curl -f https://raiderbot-mcp.raiderexpress.palantirfoundry.com/readyz
+
+# Test Pipedream Integration
+./scripts/pipedream_smoke.sh
 
 # Test Snowflake Connection
 python -c "

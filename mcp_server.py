@@ -1,18 +1,18 @@
 #!/usr/bin/env python3
 
-import asyncio
-import json
 import logging
 from datetime import datetime
-from typing import Dict, Any, Optional
-from fastapi import FastAPI, HTTPException
+from typing import Dict, Any
+from fastapi import FastAPI, Body
 from fastapi.responses import JSONResponse
 import uvicorn
+from mcp.pipedream_client import PipedreamClient
 
 app = FastAPI(title="RaiderBot MCP Server", version="1.0.0")
 
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger(__name__)
+
 
 @app.get("/readyz")
 async def readiness_check():
@@ -22,9 +22,10 @@ async def readiness_check():
             "status": "ready",
             "timestamp": datetime.utcnow().isoformat() + "Z",
             "service": "raiderbot-mcp",
-            "version": "1.0.0"
-        }
+            "version": "1.0.0",
+        },
     )
+
 
 @app.get("/livez")
 async def liveness_check():
@@ -33,9 +34,10 @@ async def liveness_check():
         content={
             "status": "alive",
             "timestamp": datetime.utcnow().isoformat() + "Z",
-            "uptime_seconds": 0
-        }
+            "uptime_seconds": 0,
+        },
     )
+
 
 @app.get("/health")
 async def health_check():
@@ -44,22 +46,51 @@ async def health_check():
         content={
             "status": "healthy",
             "timestamp": datetime.utcnow().isoformat() + "Z",
-            "checks": {
-                "database": "ok",
-                "external_apis": "ok",
-                "memory": "ok"
-            }
-        }
+            "checks": {"database": "ok", "external_apis": "ok", "memory": "ok"},
+        },
     )
+
+
+@app.post("/mcp/pipedream/get_me")
+async def mcp_pipedream_get_me():
+    try:
+        client = PipedreamClient()
+        return {"success": True, "data": await client.get_me()}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500, content={"success": False, "error": str(e)}
+        )
+
+
+@app.post("/mcp/pipedream/emit_event")
+async def mcp_pipedream_emit_event(body: Dict[str, Any] = Body(...)):
+    try:
+        source_id = body.get("source_id")
+        payload = body.get("payload", {})
+        if not source_id:
+            return JSONResponse(
+                status_code=400,
+                content={"success": False, "error": "source_id is required"},
+            )
+        client = PipedreamClient()
+        data = await client.emit_event(source_id, payload)
+        return {"success": True, "data": data}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500, content={"success": False, "error": str(e)}
+        )
+
 
 @app.middleware("http")
 async def add_process_time_header(request, call_next):
     import time
+
     start_time = time.time()
     response = await call_next(request)
     process_time = time.time() - start_time
     response.headers["X-Process-Time"] = str(process_time)
     return response
+
 
 if __name__ == "__main__":
     uvicorn.run(app, host="0.0.0.0", port=8080)

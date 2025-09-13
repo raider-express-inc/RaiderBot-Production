@@ -1,0 +1,7 @@
+foundry_api_base: "https://raiderexpress.palantirfoundry.com"
+functions_gateway_base: "https://raiderexpress.palantirfoundry.com/functions"
+langgraph_service_base: "https://raiderbot-brain.raiderexpress.palantirfoundry.com"
+semantic_base: "https://raiderbot-semantic.raiderexpress.palantirfoundry.com"
+mcp_base: "https://raiderbot-mcp.raiderexpress.palantirfoundry.com"
+pipedream_api_base: "https://api.pipedream.com/v1"
+use_pipedream: true
