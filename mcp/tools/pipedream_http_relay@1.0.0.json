@@ -1,0 +1,22 @@
+{
+  "name": "pipedream.http_relay",
+  "description": "Proxy an outbound HTTP request through Pipedream to bypass redirects/auth/SSL issues.",
+  "input_schema": {
+    "type": "object",
+    "required": ["url"],
+    "properties": {
+      "url": { "type": "string" },
+      "method": { "type": "string", "enum": ["GET","POST","PUT","PATCH","DELETE"], "default": "GET" },
+      "headers": { "type": "object", "additionalProperties": { "type": "string" } },
+      "body": { "type": ["object","array","string","null"] }
+    }
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "success": { "type": "boolean" },
+      "data": { "type": "object" },
+      "error": { "type": "string" }
+    }
+  }
+}

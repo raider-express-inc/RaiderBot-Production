@@ -1,11 +1,13 @@
 #!/usr/bin/env python3
 
 import logging
+import os
 from datetime import datetime
 from typing import Dict, Any
 from fastapi import FastAPI, Body
 from fastapi.responses import JSONResponse
 import uvicorn
+import httpx
 from mcp.pipedream_client import PipedreamClient
 
 app = FastAPI(title="RaiderBot MCP Server", version="1.0.0")
@@ -75,6 +77,42 @@ async def mcp_pipedream_emit_event(body: Dict[str, Any] = Body(...)):
         client = PipedreamClient()
         data = await client.emit_event(source_id, payload)
         return {"success": True, "data": data}
+    except Exception as e:
+        return JSONResponse(
+            status_code=500, content={"success": False, "error": str(e)}
+        )
+
+
+@app.post("/mcp/pipedream/http_relay")
+async def mcp_pipedream_http_relay(body: Dict[str, Any] = Body(...)):
+    relay_url = os.getenv("PIPEDREAM_RELAY_URL")
+    if not relay_url:
+        return JSONResponse(
+            status_code=500,
+            content={"success": False, "error": "PIPEDREAM_RELAY_URL not set"},
+        )
+    try:
+        url = body.get("url")
+        method = (body.get("method") or "GET").upper()
+        headers = body.get("headers") or {}
+        payload = body.get("body")
+        async with httpx.AsyncClient(timeout=30.0, follow_redirects=False) as client:
+            r = await client.post(
+                relay_url,
+                json={
+                    "url": url,
+                    "method": method,
+                    "headers": headers,
+                    "body": payload,
+                },
+            )
+            r.raise_for_status()
+            data = (
+                r.json()
+                if "application/json" in r.headers.get("content-type", "")
+                else {"text": r.text}
+            )
+            return {"success": True, "data": data}
     except Exception as e:
         return JSONResponse(
             status_code=500, content={"success": False, "error": str(e)}

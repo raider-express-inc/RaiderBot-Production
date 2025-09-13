@@ -44,8 +44,11 @@ export SNOWFLAKE_WAREHOUSE="TABLEAU_CONNECT"
 export SNOWFLAKE_ROLE="ACCOUNTADMIN"
 
 # Pipedream Integration
-export PIPEDREAM_API_KEY="your-pipedream-api-key"
+export PIPEDREAM_API_KEY="7672368099fc1d5e2c3360fc95265da4"
 export PIPEDREAM_API_BASE="https://api.pipedream.com/v1"
+export PIPEDREAM_RELAY_URL="https://xxxxx.m.pipedream.net"
+export USE_PIPEDREAM="true"
+export MCP_BASE="http://localhost:8080"
 ```
 
 ## Implementation Status
