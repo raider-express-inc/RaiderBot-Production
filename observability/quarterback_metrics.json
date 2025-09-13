@@ -1,0 +1,38 @@
+{
+  "metrics_version": "1.0.0",
+  "timestamp": "2025-09-13T18:44:39Z",
+  "scenarios": [
+    {
+      "scenario": "rate_analysis",
+      "description": "Snowflake SQL rate analysis query",
+      "last_execution": null,
+      "success_rate": 0.0,
+      "avg_latency_ms": 0,
+      "p95_latency_ms": 0,
+      "tool_selections": []
+    },
+    {
+      "scenario": "document_qa",
+      "description": "Knowledge base semantic search",
+      "last_execution": null,
+      "success_rate": 0.0,
+      "avg_latency_ms": 0,
+      "p95_latency_ms": 0,
+      "tool_selections": []
+    },
+    {
+      "scenario": "ops_lookup",
+      "description": "Operational data lookup via Foundry",
+      "last_execution": null,
+      "success_rate": 0.0,
+      "avg_latency_ms": 0,
+      "p95_latency_ms": 0,
+      "tool_selections": []
+    }
+  ],
+  "slo_targets": {
+    "success_rate_threshold": 0.95,
+    "p95_latency_threshold_ms": 4000,
+    "error_rate_threshold": 0.02
+  }
+}

@@ -1,0 +1,52 @@
+{
+  "tool_name": "dataset_run_sql",
+  "version": "1.0.0",
+  "description": "Execute read-only SQL queries against Snowflake database",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "sql": {
+        "type": "string",
+        "description": "Read-only SQL query (SELECT/SHOW/DESCRIBE/EXPLAIN only)",
+        "pattern": "^\\s*(SELECT|SHOW|DESCRIBE|EXPLAIN)\\b"
+      },
+      "limit": {
+        "type": "integer",
+        "description": "Maximum number of rows to return",
+        "default": 1000,
+        "minimum": 1,
+        "maximum": 10000
+      }
+    },
+    "required": ["sql"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "row_count": {
+        "type": "integer",
+        "description": "Number of rows returned"
+      },
+      "rows": {
+        "type": "array",
+        "description": "Array of result rows as key-value objects",
+        "items": {
+          "type": "object"
+        }
+      }
+    },
+    "required": ["row_count", "rows"]
+  },
+  "examples": [
+    {
+      "input": {
+        "sql": "SELECT COUNT(*) as total_orders FROM dbo.orders",
+        "limit": 1
+      },
+      "output": {
+        "row_count": 1,
+        "rows": [{"total_orders": 12345}]
+      }
+    }
+  ]
+}

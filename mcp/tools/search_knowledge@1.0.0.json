@@ -1,0 +1,73 @@
+{
+  "tool_name": "search_knowledge",
+  "version": "1.0.0", 
+  "description": "Search knowledge base using Snowflake Cortex Search",
+  "input_schema": {
+    "type": "object",
+    "properties": {
+      "query": {
+        "type": "string",
+        "description": "Search query for knowledge base",
+        "minLength": 1,
+        "maxLength": 1000
+      },
+      "limit": {
+        "type": "integer",
+        "description": "Maximum number of results to return",
+        "default": 5,
+        "minimum": 1,
+        "maximum": 50
+      }
+    },
+    "required": ["query"]
+  },
+  "output_schema": {
+    "type": "object",
+    "properties": {
+      "hits": {
+        "type": "array",
+        "description": "Array of search results",
+        "items": {
+          "type": "object",
+          "properties": {
+            "title": {
+              "type": "string",
+              "description": "Document title"
+            },
+            "domain": {
+              "type": "string", 
+              "description": "Document domain/category"
+            },
+            "content": {
+              "type": "string",
+              "description": "Relevant content snippet"
+            },
+            "score": {
+              "type": "number",
+              "description": "Relevance score (0.0-1.0)"
+            }
+          }
+        }
+      }
+    },
+    "required": ["hits"]
+  },
+  "examples": [
+    {
+      "input": {
+        "query": "shipping rates expedited delivery",
+        "limit": 3
+      },
+      "output": {
+        "hits": [
+          {
+            "title": "Expedited Shipping Guide",
+            "domain": "logistics",
+            "content": "Expedited delivery rates start at $15.99 for packages under 5 lbs...",
+            "score": 0.95
+          }
+        ]
+      }
+    }
+  ]
+}

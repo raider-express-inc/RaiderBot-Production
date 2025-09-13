@@ -1,0 +1,59 @@
+{
+  "routing_version": "1.0.0",
+  "intent_mappings": [
+    {
+      "intent": "rate_analysis",
+      "description": "Financial rate analysis and SQL queries",
+      "tools": [
+        {
+          "tool_id": "dataset_run_sql:v1",
+          "weight": 0.8,
+          "endpoint": "https://raiderexpress.palantirfoundry.com/functions/ri.raiderbot/dataset_run_sql:v1"
+        },
+        {
+          "tool_id": "snowflake_query",
+          "weight": 0.2,
+          "endpoint": "mcp://snowflake/snowflake_query"
+        }
+      ]
+    },
+    {
+      "intent": "document_qa",
+      "description": "Document question answering and semantic search",
+      "tools": [
+        {
+          "tool_id": "search_knowledge:v1",
+          "weight": 0.9,
+          "endpoint": "https://raiderexpress.palantirfoundry.com/functions/ri.raiderbot/search_knowledge:v1"
+        },
+        {
+          "tool_id": "semantic_search",
+          "weight": 0.1,
+          "endpoint": "https://raiderbot-semantic.raiderexpress.palantirfoundry.com/search"
+        }
+      ]
+    },
+    {
+      "intent": "ops_lookup",
+      "description": "Operational data lookup and system queries",
+      "tools": [
+        {
+          "tool_id": "dataset_run_sql:v1",
+          "weight": 0.6,
+          "endpoint": "https://raiderexpress.palantirfoundry.com/functions/ri.raiderbot/dataset_run_sql:v1"
+        },
+        {
+          "tool_id": "foundry_object_lookup",
+          "weight": 0.4,
+          "endpoint": "mcp://palantir-foundry/search_foundry_objects"
+        }
+      ]
+    }
+  ],
+  "fallback_tools": [
+    {
+      "tool_id": "dataset_run_sql:v1",
+      "endpoint": "https://raiderexpress.palantirfoundry.com/functions/ri.raiderbot/dataset_run_sql:v1"
+    }
+  ]
+}
