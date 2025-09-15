@@ -37,14 +37,16 @@ export SNOWFLAKE_OAUTH_TOKEN="your-oauth-token"
 # Snowflake Connection
 export SNOWFLAKE_ACCOUNT="LI21842-WW07444"
 export SNOWFLAKE_USER="DEVINAI"
-export SNOWFLAKE_PASSWORD="R@ider_10141066!"
+# Security: Do not hardcode secrets in documentation or code.
+# Use environment variables instead:
+export SNOWFLAKE_PASSWORD="your-snowflake-password"
 export SNOWFLAKE_DATABASE="MCLEOD_DB"
 export SNOWFLAKE_SCHEMA="dbo"
 export SNOWFLAKE_WAREHOUSE="TABLEAU_CONNECT"
 export SNOWFLAKE_ROLE="ACCOUNTADMIN"
 
 # Pipedream Integration
-export PIPEDREAM_API_KEY="7672368099fc1d5e2c3360fc95265da4"
+export PIPEDREAM_API_KEY="your-pipedream-api-key"
 export PIPEDREAM_API_BASE="https://api.pipedream.com/v1"
 export PIPEDREAM_RELAY_URL="https://xxxxx.m.pipedream.net"
 export USE_PIPEDREAM="true"
