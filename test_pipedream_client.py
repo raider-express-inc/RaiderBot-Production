@@ -14,8 +14,8 @@ async def test_pipedream_client():
         client = PipedreamClient()
         result = await client.get_me()
         print("✅ Pipedream client test passed")
-        print(f'User: {result.get("username", "N/A")}')
-        print(f'ID: {result.get("id", "N/A")}')
+        print(f"User: {result.get('username', 'N/A')}")
+        print(f"ID: {result.get('id', 'N/A')}")
         return True
     except Exception as e:
         print(f"❌ Pipedream client test failed: {e}")
