@@ -4,7 +4,6 @@ Using @continue.ask and @continue.debug patterns to find correct API structure
 """
 import asyncio
 import os
-import json
 from dotenv import load_dotenv
 import httpx
 
@@ -54,13 +53,13 @@ async def continue_debug_foundry_apis():
                     try:
                         data = response.json()
                         print(f"   📄 User info: {data.get('username', data.get('id', 'Unknown'))}")
-                    except:
+                    except Exception:
                         print(f"   📄 Response length: {len(response.text)} chars")
                         
             except Exception as e:
                 print(f"❌ {endpoint}: Error - {str(e)[:50]}...")
     
-    print(f"\n🏗️ Testing Workshop-specific patterns...")
+    print("\n🏗️ Testing Workshop-specific patterns...")
     
     workshop_patterns = [
         "/compass/api/applications",
@@ -83,21 +82,21 @@ async def continue_debug_foundry_apis():
                     try:
                         data = response.json()
                         print(f"   📄 Response keys: {list(data.keys()) if isinstance(data, dict) else 'List response'}")
-                    except:
+                    except Exception:
                         print(f"   📄 Response length: {len(response.text)} chars")
                 elif response.status_code == 403:
-                    print(f"   🔒 Forbidden - may need different permissions")
+                    print("   🔒 Forbidden - may need different permissions")
                 elif response.status_code == 401:
-                    print(f"   🔑 Unauthorized - authentication issue")
+                    print("   🔑 Unauthorized - authentication issue")
                         
             except Exception as e:
                 print(f"❌ {pattern}: Error - {str(e)[:50]}...")
     
-    print(f"\n💡 Continue.dev Recommendations:")
-    print(f"   @continue.ask: Generate correct Foundry Workshop API client")
-    print(f"   @continue.debug: Investigate authentication token scope")
-    print(f"   @continue.docsearch: Find latest Foundry API documentation")
-    print(f"   @continue.refactor: Update SDK with correct endpoint patterns")
+    print("\n💡 Continue.dev Recommendations:")
+    print("   @continue.ask: Generate correct Foundry Workshop API client")
+    print("   @continue.debug: Investigate authentication token scope")
+    print("   @continue.docsearch: Find latest Foundry API documentation")
+    print("   @continue.refactor: Update SDK with correct endpoint patterns")
 
 if __name__ == "__main__":
     asyncio.run(continue_debug_foundry_apis())

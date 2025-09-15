@@ -22,9 +22,9 @@ python scripts/register_aip_tool.py --dry-run
 Required environment variables:
 ```bash
 # Foundry OAuth
-export FOUNDry_OAUTH_CLIENT_ID="your-client-id"
-export FOUNDry_OAUTH_CLIENT_SECRET="your-client-secret"
-export FOUNDry_OAUTH_TOKEN_URL="https://raiderexpress.palantirfoundry.com/multipass/api/oauth2/token"
+export FOUNDRY_OAUTH_CLIENT_ID="your-client-id"
+export FOUNDRY_OAUTH_CLIENT_SECRET="your-client-secret"
+export FOUNDRY_OAUTH_TOKEN_URL="https://raiderexpress.palantirfoundry.com/multipass/api/oauth2/token"
 
 # Foundry API
 export FOUNDRY_TOKEN="your-foundry-token"
@@ -35,15 +35,15 @@ export SNOWFLAKE_OAUTH_CLIENT_SECRET="your-snowflake-client-secret"
 export SNOWFLAKE_OAUTH_TOKEN="your-oauth-token"
 
 # Snowflake Connection
-export SNOWFLAKE_ACCOUNT="LI21842-WW07444"
-export SNOWFLAKE_USER="DEVINAI"
+export SNOWFLAKE_ACCOUNT="your-snowflake-account"
+export SNOWFLAKE_USER="your-snowflake-user"
 # Security: Do not hardcode secrets in documentation or code.
 # Use environment variables instead:
 export SNOWFLAKE_PASSWORD="your-snowflake-password"
-export SNOWFLAKE_DATABASE="MCLEOD_DB"
-export SNOWFLAKE_SCHEMA="dbo"
-export SNOWFLAKE_WAREHOUSE="TABLEAU_CONNECT"
-export SNOWFLAKE_ROLE="ACCOUNTADMIN"
+export SNOWFLAKE_DATABASE="your-database"
+export SNOWFLAKE_SCHEMA="your-schema"
+export SNOWFLAKE_WAREHOUSE="your-warehouse"
+export SNOWFLAKE_ROLE="your-role"
 
 # Pipedream Integration
 export PIPEDREAM_API_KEY="your-pipedream-api-key"
@@ -112,14 +112,15 @@ curl -f https://raiderbot-mcp.raiderexpress.palantirfoundry.com/readyz
 
 # Test Snowflake Connection
 python -c "
+import os
 import snowflake.connector as sf
 cnx = sf.connect(
-    account='LI21842-WW07444',
-    user='DEVINAI', 
-    password='R@ider_10141066!',
-    warehouse='TABLEAU_CONNECT',
-    database='MCLEOD_DB',
-    schema='dbo'
+    account=os.getenv('SNOWFLAKE_ACCOUNT'),
+    user=os.getenv('SNOWFLAKE_USER'),
+    password=os.getenv('SNOWFLAKE_PASSWORD'),
+    warehouse=os.getenv('SNOWFLAKE_WAREHOUSE'),
+    database=os.getenv('SNOWFLAKE_DATABASE'),
+    schema=os.getenv('SNOWFLAKE_SCHEMA')
 )
 print('✅ Snowflake connection successful')
 cnx.close()

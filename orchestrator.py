@@ -9,7 +9,7 @@ import sys
 import json
 import logging
 import asyncio
-from typing import Dict, List, Any, Optional
+from typing import Dict, List, Any
 from datetime import datetime
 
 sys.path.append('/home/ubuntu/repos/raiderbot-foundry-functions')
@@ -82,7 +82,6 @@ class UnifiedOrchestrator:
         try:
             from langchain.agents import initialize_agent, AgentType
             from langchain.llms import OpenAI
-            from langchain.tools import Tool
             
             llm = OpenAI(api_key=os.getenv('OPENAI_API_KEY'))
             tools = self._create_mcp_tools()

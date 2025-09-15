@@ -9,9 +9,8 @@ from dataclasses import dataclass
 from enum import Enum
 
 try:
-    from ontology_sdk import FoundryClient
-    from ontology_sdk.ontology.objects import ObjectType, LinkType
-    ONTOLOGY_SDK_AVAILABLE = True
+    import importlib.util
+    ONTOLOGY_SDK_AVAILABLE = importlib.util.find_spec("ontology_sdk") is not None
 except ImportError:
     ONTOLOGY_SDK_AVAILABLE = False
     print("Warning: ontology_sdk not available. Using mock implementation.")
@@ -195,7 +194,7 @@ class OntologyManager:
                     self.ontology_client.objects.TransportationOrder.status == "active"
                 )
                 return [order.properties for order in orders]
-            except Exception as e:
+            except Exception:
                 return []
         else:
             return [
@@ -214,7 +213,7 @@ class OntologyManager:
                 else:
                     vehicles = await self.ontology_client.objects.FleetVehicle.all()
                 return [vehicle.properties for vehicle in vehicles]
-            except Exception as e:
+            except Exception:
                 return []
         else:
             mock_vehicles = [

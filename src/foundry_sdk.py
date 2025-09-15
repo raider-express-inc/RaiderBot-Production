@@ -4,9 +4,8 @@ Based on patterns from foundry-mcp-server
 """
 
 import httpx
-import json
 import os
-from typing import Dict, Any, List, Optional
+from typing import Dict, Any, List
 from datetime import datetime
 
 class FoundryClient:
@@ -70,7 +69,7 @@ class FoundryClient:
                         try:
                             response_data = response.json()
                             app_id = response_data.get("id", response_data.get("rid", f"workshop_{datetime.now().timestamp()}"))
-                        except:
+                        except Exception:
                             response_data = {"raw_response": response.text, "endpoint": endpoint}
                             app_id = f"workshop_{datetime.now().timestamp()}"
                         
@@ -137,7 +136,7 @@ class FoundryClient:
                         try:
                             api_response = response.json()
                             viz_id = api_response.get("id", api_response.get("widget_id", f"viz_{datetime.now().timestamp()}"))
-                        except:
+                        except Exception:
                             api_response = {"raw_response": response.text, "endpoint": endpoint}
                             viz_id = f"viz_{datetime.now().timestamp()}"
                         
@@ -224,7 +223,7 @@ class FoundryClient:
                         try:
                             response_data = response.json()
                             app_id = response_data.get("id", response_data.get("rid", f"dashboard_{dashboard_config['user_id']}_{datetime.now().timestamp()}"))
-                        except:
+                        except Exception:
                             response_data = {"raw_response": response.text, "endpoint": endpoint}
                             app_id = f"dashboard_{dashboard_config['user_id']}_{datetime.now().timestamp()}"
                         
@@ -296,7 +295,7 @@ class FoundryClient:
                                 })
                             
                             return workbooks if workbooks else []
-                        except Exception as parse_error:
+                        except Exception:
                             continue  # Try next endpoint
                     elif response.status_code == 404:
                         continue  # Try next endpoint

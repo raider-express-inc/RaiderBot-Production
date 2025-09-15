@@ -6,8 +6,6 @@ Reliable wrapper to connect Claude Desktop to RaiderBot cloud server
 
 import requests
 import json
-import sys
-import os
 
 def main():
     try:

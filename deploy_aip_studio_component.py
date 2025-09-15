@@ -47,7 +47,7 @@ async def deploy_aip_studio_components():
         print(f"   Commands: {len(bot_status.get('available_commands', []))} registered")
         
         print("\n4️⃣ Initializing workbook instruction service...")
-        workbook_service = WorkbookInstructionService(mock_engine.foundry_client)
+        _ = WorkbookInstructionService(mock_engine.foundry_client)
         workbook_status = {"status": "initialized", "supported_visualizations": ["chart", "table", "metrics", "dashboard"]}
         print(f"✅ Workbook Service: {workbook_status['status']}")
         print(f"   Visualization Types: {len(workbook_status.get('supported_visualizations', []))}")
@@ -98,7 +98,7 @@ async def deploy_aip_studio_components():
             json.dump(deployment_result, f, indent=2)
         
         print("\n✅ AIP Studio integration deployed successfully!")
-        print(f"📄 Deployment status saved to aip_studio_deployment_status.json")
+        print("📄 Deployment status saved to aip_studio_deployment_status.json")
         print("\n🔗 Access Methods:")
         for method in deployment_result['access_methods']:
             print(f"   • {method}")

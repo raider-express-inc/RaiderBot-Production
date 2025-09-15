@@ -3,8 +3,6 @@ Debug script for Foundry API endpoints using Continue.dev patterns
 This script will help identify correct API endpoints and request formats
 """
 import asyncio
-import os
-import json
 from dotenv import load_dotenv
 from src.foundry_sdk import FoundryClient
 
@@ -45,13 +43,13 @@ async def debug_foundry_endpoints():
                     try:
                         data = response.json()
                         print(f"   📄 Response keys: {list(data.keys()) if isinstance(data, dict) else 'List response'}")
-                    except:
+                    except Exception:
                         print(f"   📄 Response length: {len(response.text)} chars")
                         
             except Exception as e:
                 print(f"❌ {endpoint}: Error - {str(e)[:50]}...")
     
-    print(f"\n🎨 Testing workbook-specific operations...")
+    print("\n🎨 Testing workbook-specific operations...")
     
     workbook_patterns = [
         "/api/v1/workbooks/test_workbook/visualizations",
@@ -82,9 +80,9 @@ async def debug_foundry_endpoints():
             except Exception as e:
                 print(f"❌ POST {pattern}: Error - {str(e)[:50]}...")
     
-    print(f"\n🦸‍♂️ Foundry endpoint debugging complete!")
-    print(f"💡 Use Continue.dev @continue.ask to scaffold correct API patterns")
-    print(f"💡 Use Continue.dev @continue.docsearch for Foundry API documentation")
+    print("\n🦸‍♂️ Foundry endpoint debugging complete!")
+    print("💡 Use Continue.dev @continue.ask to scaffold correct API patterns")
+    print("💡 Use Continue.dev @continue.docsearch for Foundry API documentation")
 
 if __name__ == "__main__":
     asyncio.run(debug_foundry_endpoints())

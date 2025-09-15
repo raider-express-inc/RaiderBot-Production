@@ -49,13 +49,16 @@ class MCPSnowflakeIntegration:
     def check_zapier_availability(self):
         """Check if Zapier MCP tools are available"""
         try:
-            from mcp_tool_call import mcp_tool_call
-            zapier_servers = [name for name in self.mcp_servers.keys() if 'zapier' in name.lower()]
-            if zapier_servers:
-                self.zapier_available = True
-                logger.info(f"✅ Zapier MCP servers found: {zapier_servers}")
+            import importlib.util
+            if importlib.util.find_spec("mcp_tool_call"):
+                zapier_servers = [name for name in self.mcp_servers.keys() if 'zapier' in name.lower()]
+                if zapier_servers:
+                    self.zapier_available = True
+                    logger.info(f"✅ Zapier MCP servers found: {zapier_servers}")
+                else:
+                    logger.info("ℹ️ No Zapier MCP servers configured")
             else:
-                logger.info("ℹ️ No Zapier MCP servers configured")
+                logger.info("ℹ️ MCP tool integration not available")
         except ImportError:
             logger.info("ℹ️ MCP tool integration not available")
     

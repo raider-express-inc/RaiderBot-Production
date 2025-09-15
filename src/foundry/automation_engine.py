@@ -8,8 +8,7 @@ import json
 import os
 from datetime import datetime
 from typing import Dict, Any, List, Optional
-from dataclasses import dataclass, asdict
-import aiohttp
+from dataclasses import dataclass
 from enum import Enum
 from .workbook_instruction_service import WorkbookInstructionService, VisualizationInstruction
 
@@ -17,8 +16,6 @@ from .workbook_instruction_service import WorkbookInstructionService, Visualizat
 try:
     # Try official SDK first
     from foundry_sdk import FoundryClient
-    from foundry_sdk.branches import Branch
-    from foundry_sdk.machinery import MachineryProcess
     FOUNDRY_AVAILABLE = True
 except ImportError:
     try:
@@ -26,7 +23,7 @@ except ImportError:
         import sys
         import os
         sys.path.append(os.path.dirname(os.path.dirname(os.path.abspath(__file__))))
-        from src.foundry_sdk import FoundryClient, Branch, MachineryProcess
+        from src.foundry_sdk import FoundryClient
         FOUNDRY_AVAILABLE = True
         print("Using real Foundry SDK with httpx")
     except ImportError:

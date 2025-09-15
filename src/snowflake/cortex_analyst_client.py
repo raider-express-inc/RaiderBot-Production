@@ -69,7 +69,7 @@ class SnowflakeConnection:
             
             try:
                 self.connection.cursor().execute("SELECT 1")
-            except:
+            except Exception:
                 logger.info("Connection lost, reconnecting...")
                 self.connection = None
                 return self.ensure_connection()
@@ -241,7 +241,7 @@ class SnowflakeConnection:
     def health_check(self) -> Dict[str, Any]:
         """Enhanced health check with Cortex status"""
         try:
-            conn = self.ensure_connection()
+            self.ensure_connection()
             test_result = self.execute_query("SELECT CURRENT_TIMESTAMP() as current_time")
             
             cortex_status = "unknown"
@@ -249,7 +249,7 @@ class SnowflakeConnection:
                 try:
                     cortex_test = self.natural_language_query("What is the current time?")
                     cortex_status = "available" if cortex_test['success'] else "error"
-                except:
+                except Exception:
                     cortex_status = "unavailable"
             
             return {

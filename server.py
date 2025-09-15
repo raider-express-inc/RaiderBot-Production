@@ -5,38 +5,36 @@ Cloud-optimized with environment variables and production features
 """
 
 import os
-import json
+import sys
 import logging
-from typing import Dict, List, Any, Optional
+from typing import Dict, Any, Optional
 from datetime import datetime
 from dotenv import load_dotenv
-
-load_dotenv()
 
 # MCP imports
 from mcp.server.fastmcp import FastMCP
 
 # Enhanced Snowflake client with MCP integration
-import sys
-sys.path.append(os.path.dirname(__file__))
 from src.snowflake.unified_connection import snowflake_client
-from src.foundry.quarterback_functions import process_user_query, autonomous_decision_making
+from src.foundry.quarterback_functions import autonomous_decision_making
 from src.mcp.mcp_snowflake_integration import mcp_integration
+
+load_dotenv()
+
+sys.path.append(os.path.dirname(__file__))
 
 # Foundry automation imports
 try:
-    import sys
-    import os
     sys.path.append(os.path.dirname(os.path.abspath(__file__)))
     from src.foundry.automation_engine import RaiderBotAutomationEngine, BuildRequest
     from src.aip.bot_integration_service import BotIntegrationService
     from src.aip.studio_deployment_service import AIPStudioDeploymentService
     from src.orchestrator.external_orchestrator_service import ExternalOrchestratorService
     from src.sema4.sema4_execution_service import Sema4ExecutionService
-    from src.audit.snowflake_audit_service import SnowflakeAuditService, AuditEventType
+    from src.audit.snowflake_audit_service import SnowflakeAuditService
     from src.dashboard.modern_dashboard_service import ModernDashboardService
     FOUNDRY_AUTOMATION_AVAILABLE = True
-except ImportError as e:
+except ImportError:
     FOUNDRY_AUTOMATION_AVAILABLE = False
 
 # Configure production logging
@@ -279,7 +277,7 @@ def analyze_customer(analysis_type: str = "top_customers", limit: int = 10) -> D
 def sql_query(query: str) -> Dict[str, Any]:
     """Execute custom SQL query (SELECT only for security)"""
     try:
-        logger.info(f"💻 Executing custom SQL query")
+        logger.info("💻 Executing custom SQL query")
         
         # Security check - only allow SELECT queries
         query_upper = query.strip().upper()
@@ -336,7 +334,7 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
             command = next((cmd for cmd in bot_integration.command_mappings.keys() if cmd in request.lower()), "general")
             
             try:
-                loop = asyncio.get_running_loop()
+                asyncio.get_running_loop()
                 import concurrent.futures
                 with concurrent.futures.ThreadPoolExecutor() as executor:
                     future = executor.submit(asyncio.run, bot_integration.process_bot_command(command, user_id))
@@ -364,7 +362,7 @@ def build_this_out(request: str, user_id: str = "default_user") -> Dict[str, Any
         import asyncio
         
         try:
-            loop = asyncio.get_running_loop()
+            asyncio.get_running_loop()
             import concurrent.futures
             with concurrent.futures.ThreadPoolExecutor() as executor:
                 future = executor.submit(asyncio.run, foundry_engine.process_build_request(build_request))
@@ -451,7 +449,7 @@ if __name__ == "__main__":
         test_result = snowflake_client.execute_query("SELECT CURRENT_TIMESTAMP() as test_time")
         if test_result["success"]:
             logger.info("✅ Snowflake connection established")
-            logger.info(f"✅ Connected to unified Snowflake client")
+            logger.info("✅ Connected to unified Snowflake client")
         else:
             logger.error(f"❌ Failed to connect to Snowflake: {test_result['error']}")
     except Exception as e:
