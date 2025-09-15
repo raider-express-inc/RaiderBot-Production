@@ -122,9 +122,9 @@ class StatusPage:
 </head>
 <body>
     <h1>RaiderBot System Status</h1>
-    <p>Overall Status: <span class="{status_data['overall_status']}">{status_data['overall_status'].upper()}</span></p>
-    <p>Services: {status_data['healthy_services']}/{status_data['total_services']} healthy</p>
-    <p>Last Updated: {status_data['timestamp']}</p>
+    <p>Overall Status: <span class="{status_data["overall_status"]}">{status_data["overall_status"].upper()}</span></p>
+    <p>Services: {status_data["healthy_services"]}/{status_data["total_services"]} healthy</p>
+    <p>Last Updated: {status_data["timestamp"]}</p>
     
     <h2>Service Details</h2>
 """
@@ -133,12 +133,12 @@ class StatusPage:
             status_class = service.get("status", "error")
             html += f"""
     <div class="service">
-        <h3>{service['name']} - <span class="{status_class}">{service.get('status', 'unknown').upper()}</span></h3>
-        <p>URL: {service['url']}</p>
-        <p>Latency: {service.get('latency_ms', 'N/A')}ms</p>
-        <p>Status Code: {service.get('status_code', 'N/A')}</p>
-        {f"<p>Error: {service['error']}</p>" if 'error' in service else ""}
-        {"<p><strong>⚠️ Redirect Detected</strong></p>" if service.get('redirect_detected') else ""}
+        <h3>{service["name"]} - <span class="{status_class}">{service.get("status", "unknown").upper()}</span></h3>
+        <p>URL: {service["url"]}</p>
+        <p>Latency: {service.get("latency_ms", "N/A")}ms</p>
+        <p>Status Code: {service.get("status_code", "N/A")}</p>
+        {f"<p>Error: {service['error']}</p>" if "error" in service else ""}
+        {"<p><strong>⚠️ Redirect Detected</strong></p>" if service.get("redirect_detected") else ""}
     </div>
 """
 
