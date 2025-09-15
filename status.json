@@ -2,15 +2,15 @@
   "overall_status": "degraded",
   "healthy_services": 0,
   "total_services": 5,
-  "timestamp": "2025-09-14T22:52:03.697784Z",
+  "timestamp": "2025-09-15T14:36:42.139407Z",
   "services": [
     {
       "name": "Foundry Functions",
       "url": "https://raiderexpress.palantirfoundry.com/functions/ri.raiderbot/dataset_run_sql:v1/health",
       "status": "unhealthy",
       "status_code": 404,
-      "latency_ms": 638,
-      "timestamp": "2025-09-14T22:52:03.697523Z",
+      "latency_ms": 619,
+      "timestamp": "2025-09-15T14:36:42.139152Z",
       "redirect_detected": false
     },
     {
@@ -18,8 +18,8 @@
       "url": "https://raiderbot-brain.raiderexpress.palantirfoundry.com/healthz",
       "status": "unhealthy",
       "status_code": 307,
-      "latency_ms": 397,
-      "timestamp": "2025-09-14T22:52:03.492041Z",
+      "latency_ms": 522,
+      "timestamp": "2025-09-15T14:36:42.074228Z",
       "redirect_detected": true
     },
     {
@@ -27,24 +27,24 @@
       "url": "https://raiderbot-semantic.raiderexpress.palantirfoundry.com/_health",
       "status": "error",
       "error": "[SSL: CERTIFICATE_VERIFY_FAILED] certificate verify failed: Hostname mismatch, certificate is not valid for 'raiderbot-semantic.raiderexpress.palantirfoundry.com'. (_ssl.c:1000)",
-      "latency_ms": 463,
-      "timestamp": "2025-09-14T22:52:03.583991Z"
+      "latency_ms": 544,
+      "timestamp": "2025-09-15T14:36:42.128055Z"
     },
     {
       "name": "MCP Server",
       "url": "http://localhost:8080/readyz",
       "status": "error",
       "error": "All connection attempts failed",
-      "latency_ms": 53,
-      "timestamp": "2025-09-14T22:52:03.201120Z"
+      "latency_ms": 68,
+      "timestamp": "2025-09-15T14:36:41.680857Z"
     },
     {
       "name": "Pipedream API",
       "url": "http://localhost:8080/mcp/pipedream/get_me",
       "status": "error",
       "error": "All connection attempts failed",
-      "latency_ms": 28,
-      "timestamp": "2025-09-14T22:52:03.201248Z"
+      "latency_ms": 36,
+      "timestamp": "2025-09-15T14:36:41.681042Z"
     }
   ]
 }
